@@ -1,0 +1,10 @@
+<h2>この記録を削除しますか？</h2>
+
+<p>{{ object.title }} - {{ object.amount }}円</p>
+
+<form method="post">
+    {% csrf_token %}
+    <button type="submit">削除する</button>
+</form>
+
+<a href="{% url 'record_list' %}">キャンセル</a>

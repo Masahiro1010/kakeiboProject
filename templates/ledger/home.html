@@ -1,0 +1,43 @@
+{% extends 'ledger/base.html' %}
+
+{% block title %}ホーム{% endblock %}
+
+{% block brand_title %}{{ user.username }}さんの会計簿{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- 左：カード部分 -->
+    <div class="col-md-5 mb-4">
+        <div class="d-flex flex-column gap-3">
+            <!-- 各カード -->
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">テンプレートを登録</h5>
+                    <p class="card-text">よく使う項目を登録して、簡単入力を実現！</p>
+                    <a href="{% url 'templateitem_create' %}" class="btn btn-primary">登録へ</a>
+                </div>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">記録一覧</h5>
+                    <p class="card-text">今までの記録を一覧で確認・編集・削除。</p>
+                    <a href="{% url 'record_list' %}" class="btn btn-secondary">一覧を見る</a>
+                </div>
+            </div>
+
+            <!-- 他のカードもここに追加してOK -->
+        </div>
+    </div>
+
+    <!-- 右：グラフ部分 -->
+    <div class="col-md-7">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">グラフ表示</h5>
+                <canvas id="myChart" width="400" height="600"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

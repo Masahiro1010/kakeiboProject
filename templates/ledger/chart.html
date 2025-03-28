@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>収支グラフ</title>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    </head>
+    <body>
+        <h2>月別 収支グラフ</h2>
+        <canvas id="summaryChart" width="300" height="150"></canvas>
+
+        <script>
+            const ctx = document.getElementById('summaryChart').getContext('2d');
+            const summaryChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: {{ labels|safe }},
+                    datasets: [
+                        {
+                            label: '収入',
+                            data: {{ income_data|safe }},
+                            backgroundColor: 'rgba(54, 162, 235, 0.5)'
+                        },
+                        {
+                            label: '支出',
+                            data: {{ expense_data|safe }},
+                            backgroundColor: 'rgba(255, 99, 132, 0.5)'
+                        }
+                    ]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '円';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        </script>
+
+        <a href="{% url 'home' %}">ホームに戻る</a>
+    </body>
+</html>

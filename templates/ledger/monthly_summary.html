@@ -1,0 +1,15 @@
+<h2>{{ month }}の収支集計</h2>
+
+<p><strong>収入合計：</strong> {{ income_total }} 円</p>
+<p><strong>支出合計：</strong> {{ expense_total }} 円</p>
+
+<h3>記録一覧</h3>
+<ul>
+    {% for record in records %}
+        <li>{{ record.date }}：{{ record.title }} - {{ record.amount }}円（{{ record.get_item_type_display }}）</li>
+    {% empty %}
+        <li>今月の記録はありません。</li>
+    {% endfor %}
+</ul>
+
+<a href="{% url 'home' %}">ホームに戻る</a>

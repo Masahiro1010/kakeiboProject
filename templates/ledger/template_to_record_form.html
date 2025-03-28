@@ -1,0 +1,7 @@
+<h2>テンプレートから記録を作成</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">記録する</button>
+</form>
+<a href="{% url 'home' %}">ホームに戻る</a>
