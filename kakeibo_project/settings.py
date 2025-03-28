@@ -22,14 +22,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-#SECRET_KEY = "django-insecure-v^)3e3j^kt^1i@iw2c#s$r2q983jf^5+kny30i$ki80yembpbz"
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-#DEBUG = True
 DEBUG = os.getenv('DEBUG') == 'True'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['your-service-name.onrender.com']
 
 
 # Application definition
@@ -46,6 +44,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -80,16 +79,6 @@ WSGI_APPLICATION = "kakeibo_project.wsgi.application"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
-    """
-    "default": {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'kakeibo_db_fgyl',
-        'USER': 'kakeibo_db_fgyl_user',
-        'PASSWORD': 'MIU4JOfrAPDhvPeZDaO3mJXrGu3oF1BW',
-        'HOST': 'dpg-cvj52o2li9vc73egtr60-a',
-        'PORT': '',
-    }"
-    """
     'default': dj_database_url.config(conn_max_age=600)
 }
 
@@ -140,3 +129,5 @@ LOGIN_URL = 'login'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
