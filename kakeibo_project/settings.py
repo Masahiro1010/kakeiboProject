@@ -128,7 +128,8 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 LOGIN_REDIRECT_URL = 'home'
-LOGIN_URL = 'login'
+LOGOUT_REDIRECT_URL = '/login/'  # 名前付きURLでOK（または 'accounts:login' など）
+LOGIN_URL = '/login/'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

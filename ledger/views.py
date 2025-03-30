@@ -19,6 +19,9 @@ from django.db.models.functions import TruncMonth
 class HomeView(LoginRequiredMixin, TemplateView):
     template_name = 'ledger/home.html'
 
+class TemplateItemConnectionView(LoginRequiredMixin, TemplateView):
+    template_name = 'ledger/templateitem_connection.html'
+
 class TemplateItemCreateView(LoginRequiredMixin, CreateView):
     model = TemplateItem
     fields = ['name', 'price', 'item_type']
@@ -28,6 +31,9 @@ class TemplateItemCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.user = self.request.user
         return super().form_valid(form)
+    
+class RecordConnectionView(LoginRequiredMixin, TemplateView):
+    template_name = 'ledger/record_connection.html'
     
 class RecordCreateView(LoginRequiredMixin, CreateView):
     model = Record

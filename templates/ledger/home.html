@@ -12,9 +12,9 @@
             <!-- 各カード -->
             <div class="card shadow-sm">
                 <div class="card-body px-3 py-3 py-lg-4">
-                    <h5 class="card-title fs-5 fs-lg-4">テンプレートを登録</h5>
-                    <p class="card-text fs-6">よく使う項目を登録して、簡単入力を実現！</p>
-                    <a href="{% url 'templateitem_create' %}" class="btn btn-primary btn-sm">登録へ</a>
+                    <h5 class="card-title fs-5 fs-lg-4">テンプレートの操作</h5>
+                    <p class="card-text fs-6">よく使う項目を登録・編集して、簡単入力を実現！</p>
+                    <a href="{% url 'templateitem_connection' %}" class="btn btn-primary btn-sm">操作をする</a>
                 </div>
             </div>
 
@@ -22,15 +22,15 @@
                 <div class="card-body px-3 py-3 py-lg-4">
                     <h5 class="card-title fs-5 fs-lg-4">記録一覧</h5>
                     <p class="card-text fs-6">今までの記録を一覧で確認・編集・削除。</p>
-                    <a href="{% url 'record_list' %}" class="btn btn-secondary btn-sm">一覧を見る</a>
+                    <a href="{% url 'record_list' %}" class="btn btn-success btn-sm">一覧を見る</a>
                 </div>
             </div>
 
             <div class="card shadow-sm">
                 <div class="card-body px-3 py-3 py-lg-4">
-                    <h5 class="card-title fs-5 fs-lg-4">記録入力</h5>
+                    <h5 class="card-title fs-5 fs-lg-4">記録の入力</h5>
                     <p class="card-text fs-6">記録を入力します。</p>
-                    <a href="{% url 'record_create' %}" class="btn btn-secondary btn-sm">入力へ</a>
+                    <a href="{% url 'record_connection' %}" class="btn btn-secondary btn-sm">入力をする</a>
                 </div>
             </div>
         </div>
