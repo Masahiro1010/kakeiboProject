@@ -22,12 +22,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('SECRET_KEY')
+SECRET_KEY = os.getenv('SECRET_KEY', '3y1BLn3ZJthKbyC0xnHkIzi7wU0k2xpvqZO2GxLGksqURbVEzA1V9W9QTuNbJ_7X5yg')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG') == 'True'
+DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = ['your-service-name.onrender.com','kakeiboproject.onrender.com']
+ALLOWED_HOSTS = ['127.0.0.1','kakeiboproject.onrender.com']
 
 
 # Application definition
@@ -79,7 +79,10 @@ WSGI_APPLICATION = "kakeibo_project.wsgi.application"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
-    'default': dj_database_url.config(conn_max_age=600)
+    'default': dj_database_url.config(
+        default='sqlite:///db.sqlite3',
+        conn_max_age=600
+    )
 }
 
 

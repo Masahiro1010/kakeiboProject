@@ -5,10 +5,10 @@
 {% block brand_title %}{{ user.username }}さんの会計簿{% endblock %}
 
 {% block content %}
-<div class="row">
+<div class="row align-items-start">
     <!-- 左：カード部分 -->
-    <div class="col-md-5 mb-4">
-        <div class="d-flex flex-column gap-3">
+    <div class="col-12 col-md-5 mb-4">
+        <div class="d-flex flex-column gap-4">
             <!-- 各カード -->
             <div class="card shadow-sm">
                 <div class="card-body">
@@ -17,7 +17,7 @@
                     <a href="{% url 'templateitem_create' %}" class="btn btn-primary">登録へ</a>
                 </div>
             </div>
-
+            
             <div class="card shadow-sm">
                 <div class="card-body">
                     <h5 class="card-title">記録一覧</h5>
@@ -26,18 +26,28 @@
                 </div>
             </div>
 
-            <!-- 他のカードもここに追加してOK -->
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">記録入力</h5>
+                    <p class="card-text">記録を入力します。</p>
+                    <a href="{% url 'record_create' %}" class="btn btn-secondary">一覧を見る</a>
+                </div>
+            </div>
         </div>
     </div>
 
     <!-- 右：グラフ部分 -->
-    <div class="col-md-7">
-        <div class="card shadow-sm">
+    <div class="col-12 col-md-7 mb-4">
+        <div class="card shadow-sm h-100 py-3">
             <div class="card-body">
-                <h5 class="card-title">グラフ表示</h5>
-                <canvas id="myChart" width="400" height="600"></canvas>
+                <h5 class="card-title mb-3">グラフ表示</h5>
+                <canvas id="myChart" class="w-100 h-100" style="min-height: 300px;"></canvas>
             </div>
         </div>
     </div>
 </div>
 {% endblock %}
+
+
+
+
