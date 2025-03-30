@@ -5,48 +5,49 @@
 {% block brand_title %}{{ user.username }}さんの会計簿{% endblock %}
 
 {% block content %}
-<div class="row g-4">
-    <!-- 左：カード部分 -->
+<div class="row gx-3 gy-4">
+    <!-- カード列 -->
     <div class="col-12 col-lg-5">
         <div class="d-flex flex-column gap-3">
             <!-- 各カード -->
             <div class="card shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">テンプレートを登録</h5>
-                    <p class="card-text">よく使う項目を登録して、簡単入力を実現！</p>
-                    <a href="{% url 'templateitem_create' %}" class="btn btn-primary">登録へ</a>
+                <div class="card-body px-3 py-3 py-lg-4">
+                    <h5 class="card-title fs-5 fs-lg-4">テンプレートを登録</h5>
+                    <p class="card-text fs-6">よく使う項目を登録して、簡単入力を実現！</p>
+                    <a href="{% url 'templateitem_create' %}" class="btn btn-primary btn-sm">登録へ</a>
                 </div>
             </div>
 
             <div class="card shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">記録一覧</h5>
-                    <p class="card-text">今までの記録を一覧で確認・編集・削除。</p>
-                    <a href="{% url 'record_list' %}" class="btn btn-secondary">一覧を見る</a>
+                <div class="card-body px-3 py-3 py-lg-4">
+                    <h5 class="card-title fs-5 fs-lg-4">記録一覧</h5>
+                    <p class="card-text fs-6">今までの記録を一覧で確認・編集・削除。</p>
+                    <a href="{% url 'record_list' %}" class="btn btn-secondary btn-sm">一覧を見る</a>
                 </div>
             </div>
 
             <div class="card shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">記録入力</h5>
-                    <p class="card-text">記録を入力します。</p>
-                    <a href="{% url 'record_create' %}" class="btn btn-secondary">一覧を見る</a>
+                <div class="card-body px-3 py-3 py-lg-4">
+                    <h5 class="card-title fs-5 fs-lg-4">記録入力</h5>
+                    <p class="card-text fs-6">記録を入力します。</p>
+                    <a href="{% url 'record_create' %}" class="btn btn-secondary btn-sm">入力へ</a>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- 右：グラフ部分 -->
+    <!-- グラフカード -->
     <div class="col-12 col-lg-7">
-        <div class="card shadow-sm h-100 p-3">
+        <div class="card shadow-sm h-100 p-3 p-lg-4">
             <div class="card-body">
-                <h5 class="card-title mb-3">グラフ表示</h5>
-                <canvas id="myChart" class="w-100" style="min-height: 300px;"></canvas>
+                <h5 class="card-title fs-5 fs-lg-4 mb-3">グラフ表示</h5>
+                <canvas id="myChart" class="w-100" style="min-height: 250px;"></canvas>
             </div>
         </div>
     </div>
 </div>
 {% endblock %}
+
 
 
 
