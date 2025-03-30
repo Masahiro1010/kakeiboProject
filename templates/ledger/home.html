@@ -5,10 +5,10 @@
 {% block brand_title %}{{ user.username }}さんの会計簿{% endblock %}
 
 {% block content %}
-<div class="row flex-wrap w-100">
+<div class="row g-4">
     <!-- 左：カード部分 -->
-    <div class="col-12 col-md-5 mb-4">
-        <div class="d-flex flex-column gap-4">
+    <div class="col-12 col-lg-5">
+        <div class="d-flex flex-column gap-3">
             <!-- 各カード -->
             <div class="card shadow-sm">
                 <div class="card-body">
@@ -17,7 +17,7 @@
                     <a href="{% url 'templateitem_create' %}" class="btn btn-primary">登録へ</a>
                 </div>
             </div>
-            
+
             <div class="card shadow-sm">
                 <div class="card-body">
                     <h5 class="card-title">記録一覧</h5>
@@ -37,11 +37,11 @@
     </div>
 
     <!-- 右：グラフ部分 -->
-    <div class="col-12 col-md-7 mb-4">
-        <div class="card shadow-sm h-100 py-3">
+    <div class="col-12 col-lg-7">
+        <div class="card shadow-sm h-100 p-3">
             <div class="card-body">
                 <h5 class="card-title mb-3">グラフ表示</h5>
-                <canvas id="myChart" class="w-100 h-100" style="min-height: 300px;"></canvas>
+                <canvas id="myChart" class="w-100" style="min-height: 300px;"></canvas>
             </div>
         </div>
     </div>
