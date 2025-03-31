@@ -1,24 +1,92 @@
-<h2>記録一覧</h2>
+{% extends 'ledger/base.html' %}
 
-<ul>
-    {% for record in records %}
-    <li>
-        <strong>{{ record.date }}</strong>:
-        {{ record.title }} -
-        {{ record.amount }}円（{{ record.get_item_type_display }}）
+{% block title %}記録一覧{% endblock %}
+{% block brand_title %}{{ user.username }}さんの会計簿{% endblock %}
 
-        {% if record.receipt_image %}
-            <br>
-            <img src="{{ record.receipt_image.url }}" width="200" alt="レシート画像">
-        {% endif %}
+{% block content %}
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-10">
+            <div class="card shadow-sm mb-4">
+                <div class="card-body px-3 py-4">
+                    <h5 class="card-title fs-5 fs-lg-4 mb-3">記録一覧（{{ period }}）</h5>
 
-        <br>
-        <a href="{% url 'record_edit' record.pk %}">編集</a> /
-        <a href="{% url 'record_delete' record.pk %}">削除</a>
-    </li>
-    {% empty %}
-        <li>記録がまだありません。</li>
-    {% endfor %}
-</ul>
+                    <!-- 切り替えボタン -->
+                    <div class="mb-3 d-flex flex-wrap gap-2">
+                        <a href="?view=all" class="btn {% if current_view == 'all' %}btn-primary{% else %}btn-outline-primary{% endif %} btn-sm">全体</a>
+                        <a href="?view=monthly" class="btn {% if current_view == 'monthly' %}btn-success{% else %}btn-outline-success{% endif %} btn-sm">月別</a>
+                        <a href="?view=daily" class="btn {% if current_view == 'daily' %}btn-warning{% else %}btn-outline-warning{% endif %} btn-sm">日別</a>
+                        <a href="?view=template" class="btn {% if current_view == 'template' %}btn-info{% else %}btn-outline-info{% endif %} btn-sm">テンプレート</a>
 
-<a href="{% url 'home' %}">ホームに戻る</a>
+                        {% if current_view != 'template' %}
+                            <a href="{% url 'chart_detail' %}?view={{ current_view }}" class="btn btn-outline-dark btn-sm">グラフを見る</a>
+                        {% endif %}
+                    </div>
+
+                    <!-- 合計表示（テンプレートモード以外） -->
+                    {% if current_view != 'template' %}
+                        <p class="mb-1"><strong>収入合計：</strong>{{ income_total }} 円</p>
+                        <p><strong>支出合計：</strong>{{ expense_total }} 円</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- 記録一覧カード（テンプレート表示中は非表示） -->
+            {% if current_view != 'template' %}
+                {% for record in records %}
+                    <div class="card shadow-sm mb-3">
+                        <div class="card-body px-3 py-3">
+                            <p class="mb-1"><strong>{{ record.date }}</strong></p>
+                            <p class="mb-1">{{ record.title }} - {{ record.amount }}円（{{ record.get_item_type_display }}）</p>
+
+                            {% if record.receipt_image %}
+                                <img src="{{ record.receipt_image.url }}" class="img-fluid rounded" style="max-width: 200px;" alt="レシート画像">
+                            {% endif %}
+
+                            <div class="mt-2">
+                                <a href="{% url 'record_edit' record.pk %}" class="btn btn-outline-secondary btn-sm">編集</a>
+                                <a href="{% url 'record_delete' record.pk %}" class="btn btn-outline-danger btn-sm">削除</a>
+                            </div>
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="card shadow-sm mb-3">
+                        <div class="card-body text-center text-muted">
+                            記録がまだありません。
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <!-- テンプレート一覧カード（template view のときだけ表示） -->
+            {% if current_view == 'template' %}
+                <div class="card shadow-sm mb-5">
+                    <div class="card-body px-3 py-4">
+                        <h5 class="card-title fs-5 mb-3">テンプレート一覧</h5>
+
+                        {% if templates %}
+                            <ul class="list-group">
+                                {% for item in templates %}
+                                    <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+                                        <div>
+                                            <strong>{{ item.name }}</strong> - {{ item.price }}円（{{ item.get_item_type_display }})
+                                        </div>
+                                        <div class="mt-2 mt-lg-0">
+                                            <a href="{% url 'templateitem_edit' item.pk %}" class="btn btn-outline-secondary btn-sm">編集</a>
+                                            <a href="{% url 'templateitem_delete' item.pk %}" class="btn btn-outline-danger btn-sm">削除</a>
+                                        </div>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p class="text-muted">テンプレートが登録されていません。</p>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endif %}
+
+            <div class="text-center mt-4">
+                <a href="{% url 'home' %}" class="btn btn-link">ホームに戻る</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

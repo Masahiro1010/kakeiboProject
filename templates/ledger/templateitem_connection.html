@@ -1,2 +1,32 @@
-<h5>テンプレートの登録</h5>
-<p><a href="{% url 'templateitem_create' %}">登録をする</a></p>
+{% extends 'ledger/base.html' %}
+
+{% block title %}テンプレート操作{% endblock %}
+{% block brand_title %}{{ user.username }}さんの会計簿{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center g-4">
+
+    <!-- テンプレート登録 -->
+    <div class="col-12 col-md-6 col-lg-5">
+        <div class="card shadow-sm">
+            <div class="card-body px-3 py-4">
+                <h5 class="card-title fs-5 fs-lg-4">テンプレートの登録</h5>
+                <p class="card-text fs-6">よく使う項目を登録して、入力をもっとラクに！</p>
+                <a href="{% url 'templateitem_create' %}" class="btn btn-primary btn-sm">登録をする</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- テンプレート編集・削除 -->
+    <div class="col-12 col-md-6 col-lg-5">
+        <div class="card shadow-sm">
+            <div class="card-body px-3 py-4">
+                <h5 class="card-title fs-5 fs-lg-4">テンプレートの編集・削除</h5>
+                <p class="card-text fs-6">登録済みテンプレートの編集や削除を行います。</p>
+                <a href="{% url 'record_list' %}?view=template" class="btn btn-success btn-sm">操作をする</a>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

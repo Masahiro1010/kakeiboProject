@@ -1,0 +1,55 @@
+{% extends 'ledger/base.html' %}
+
+{% block title %}収支グラフ{% endblock %}
+{% block brand_title %}{{ user.username }}さんの会計簿{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-12 col-lg-8">
+        <div class="card shadow-sm">
+            <div class="card-body px-3 py-4">
+                <h5 class="card-title text-center fs-5 fs-lg-4 mb-4">{{ label }} の収支グラフ</h5>
+
+                <!-- Chart -->
+                <canvas id="simpleChart" class="w-100" style="max-height: 300px;"></canvas>
+
+                <!-- 戻るボタン -->
+                <div class="text-center mt-4">
+                    <a href="{% url 'record_list' %}" class="btn btn-outline-primary btn-sm">記録一覧に戻る</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const ctx = document.getElementById('simpleChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['収入', '支出'],
+            datasets: [{
+                label: '{{ label }}',
+                data: [{{ income_total }}, {{ expense_total }}],
+                backgroundColor: ['rgba(54, 162, 235, 0.6)', 'rgba(255, 99, 132, 0.6)']
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return value + '円';
+                        }
+                    }
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

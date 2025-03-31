@@ -15,6 +15,8 @@ from django.db.models import Sum
 import calendar
 from collections import defaultdict
 from django.db.models.functions import TruncMonth
+from django.db.models.functions import TruncDate
+from datetime import date
 
 class HomeView(LoginRequiredMixin, TemplateView):
     template_name = 'ledger/home.html'
@@ -31,6 +33,29 @@ class TemplateItemCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.user = self.request.user
         return super().form_valid(form)
+    
+class TemplateItemUpdateView(LoginRequiredMixin, UpdateView):
+    model = TemplateItem
+    fields = ['name', 'price', 'item_type']
+    template_name = 'ledger/templateitem_form.html'
+    success_url = reverse_lazy('record_list')
+
+    def get_object(self, queryset=None):
+        item = super().get_object(queryset)
+        if item.user != self.request.user:
+            raise PermissionDenied()
+        return item
+
+class TemplateItemDeleteView(LoginRequiredMixin, DeleteView):
+    model = TemplateItem
+    template_name = 'ledger/templateitem_confirm_delete.html'
+    success_url = reverse_lazy('record_list')
+
+    def get_object(self, queryset=None):
+        item = super().get_object(queryset)
+        if item.user != self.request.user:
+            raise PermissionDenied()
+        return item
     
 class RecordConnectionView(LoginRequiredMixin, TemplateView):
     template_name = 'ledger/record_connection.html'
@@ -69,13 +94,60 @@ class TemplateToRecordView(LoginRequiredMixin, FormView):
 
         return super().form_valid(form)
     
-class RecordListView(LoginRequiredMixin, ListView):
-    model = Record
+class RecordListView(LoginRequiredMixin, TemplateView):
     template_name = 'ledger/record_list.html'
-    context_object_name = 'records'
 
-    def get_queryset(self):
-        return Record.objects.filter(user=self.request.user).order_by('-date')
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        view_type = self.request.GET.get('view', 'all')  # ?view=...
+
+        if view_type == 'monthly':
+            today = now().date()
+            start_date = today.replace(day=1)
+            end_day = calendar.monthrange(today.year, today.month)[1]
+            end_date = today.replace(day=end_day)
+            records = Record.objects.filter(user=user, date__range=(start_date, end_date))
+            context['current_view'] = 'monthly'
+            context['period'] = today.strftime("%Y年%m月")
+            records_limited = records
+
+        elif view_type == 'daily':
+            today = now().date()
+            records = Record.objects.filter(user=user, date=today)
+            context['current_view'] = 'daily'
+            context['period'] = today.strftime("%Y年%m月%d日")
+            records_limited = records
+
+        elif view_type == 'template':
+            context['current_view'] = 'template'
+            context['period'] = 'テンプレート一覧'
+            records_limited = []  # 記録は表示しない
+
+        else:  # all
+            records = Record.objects.filter(user=user).order_by('-date')
+            records_limited = records[:50]
+            context['current_view'] = 'all'
+            context['period'] = '最新50件'
+
+        # 合計（テンプレート表示中は0にする）
+        if view_type != 'template':
+            income_total = records.filter(item_type='income').aggregate(Sum('amount'))['amount__sum'] or 0
+            expense_total = records.filter(item_type='expense').aggregate(Sum('amount'))['amount__sum'] or 0
+        else:
+            income_total = 0
+            expense_total = 0
+
+        # テンプレート一覧は常に渡す（表示はテンプレート内で制御）
+        templates = TemplateItem.objects.filter(user=user)
+
+        context.update({
+            'records': records_limited,
+            'income_total': income_total,
+            'expense_total': expense_total,
+            'templates': templates,
+        })
+        return context
     
 class RecordUpdateView(LoginRequiredMixin, UpdateView):
     model = Record
@@ -154,5 +226,49 @@ class ChartView(LoginRequiredMixin, TemplateView):
         context['labels'] = list(data.keys())
         context['income_data'] = [data[m]['income'] for m in data]
         context['expense_data'] = [data[m]['expense'] for m in data]
+
+        return context
+    
+class ChartDetailView(LoginRequiredMixin, TemplateView):
+    template_name = 'ledger/chart_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        view_type = self.request.GET.get('view', 'all')
+        today = now().date()
+
+        if view_type == 'monthly':
+            start_date = today.replace(day=1)
+            end_date = today.replace(day=calendar.monthrange(today.year, today.month)[1])
+            label = today.strftime('%Y年%m月')
+        elif view_type == 'daily':
+            start_date = end_date = today
+            label = today.strftime('%Y年%m月%d日')
+        else:
+            start_date = None
+            end_date = None
+            label = '最新50件'
+
+        # データ取得
+        if start_date and end_date:
+            records = Record.objects.filter(user=user, date__range=(start_date, end_date)).order_by('-date')
+        else:
+            # スライス前のデータ（集計用）
+            records_all = Record.objects.filter(user=user).order_by('-date')
+            records = records_all[:50]
+
+        # 集計用：スライス前の records_all または records を使う
+        if start_date and end_date:
+            records_for_aggregate = records
+        else:
+            records_for_aggregate = records_all
+
+        income_total = records_for_aggregate.filter(item_type='income').aggregate(Sum('amount'))['amount__sum'] or 0
+        expense_total = records_for_aggregate.filter(item_type='expense').aggregate(Sum('amount'))['amount__sum'] or 0
+
+        context['label'] = label
+        context['income_total'] = income_total
+        context['expense_total'] = expense_total
 
         return context

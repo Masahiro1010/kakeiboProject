@@ -1,7 +1,38 @@
-<h2>テンプレートを登録</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">保存</button>
-</form>
-<a href="{% url 'home' %}">戻る</a>
+{% extends 'ledger/base.html' %}
+
+{% block title %}テンプレート登録{% endblock %}
+{% block brand_title %}{{ user.username }}さんの会計簿{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-12 col-md-8 col-lg-6">
+        <div class="card shadow-sm">
+            <div class="card-body px-3 py-4">
+                <h5 class="card-title text-center fs-5 fs-lg-4 mb-4">テンプレートを登録</h5>
+
+                <form method="post">
+                    {% csrf_token %}
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+                    {% endif %}
+                    {% for field in form %}
+                        <div class="mb-3">
+                            <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.errors %}
+                                <div class="text-danger small">{{ field.errors|striptags }}</div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+
+                    <button type="submit" class="btn btn-success w-100 btn-sm">保存する</button>
+                </form>
+
+                <div class="text-center mt-3">
+                    <a href="{% url 'templateitem_connection' %}" class="text-decoration-none">戻る</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
