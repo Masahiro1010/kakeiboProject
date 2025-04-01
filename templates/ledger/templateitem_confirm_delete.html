@@ -1,15 +1,26 @@
 {% extends 'ledger/base.html' %}
+
 {% block title %}テンプレート削除{% endblock %}
+{% block brand_title %}{{ user.username }}さんのテンプレート削除{% endblock %}
 
 {% block content %}
-    <div class="container mt-4">
-        <h2 class="mb-4">テンプレート削除確認</h2>
-        <p>「{{ object.name }}」を本当に削除しますか？</p>
+<div class="row justify-content-center">
+    <div class="col-12 col-md-8 col-lg-6">
+        <div class="card shadow-sm">
+            <div class="card-body px-3 py-4">
 
-        <form method="post">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-danger">削除する</button>
-            <a href="{% url 'record_list' %}?view=template" class="btn btn-secondary">キャンセル</a>
-        </form>
+                <h5 class="card-title text-center fs-5 fs-lg-4 mb-4">テンプレート削除の確認</h5>
+
+                <p class="text-center mb-4">「<strong>{{ object.name }}</strong>」を本当に削除しますか？</p>
+
+                <form method="post" class="d-flex justify-content-center flex-column flex-sm-row gap-2">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger btn-sm">削除する</button>
+                    <a href="{% url 'record_list' %}?view=template" class="btn btn-secondary btn-sm">キャンセル</a>
+                </form>
+
+            </div>
+        </div>
     </div>
+</div>
 {% endblock %}

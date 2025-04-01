@@ -1,10 +1,28 @@
-<h2>この記録を削除しますか？</h2>
+{% extends 'ledger/base.html' %}
 
-<p>{{ object.title }} - {{ object.amount }}円</p>
+{% block title %}記録の削除{% endblock %}
+{% block brand_title %}{{ user.username }}さんのレコード削除{% endblock %}
 
-<form method="post">
-    {% csrf_token %}
-    <button type="submit">削除する</button>
-</form>
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-12 col-md-8 col-lg-6">
+        <div class="card shadow-sm">
+            <div class="card-body px-3 py-4">
 
-<a href="{% url 'record_list' %}">キャンセル</a>
+                <h5 class="card-title text-center fs-5 fs-lg-4 mb-4">この記録を削除しますか？</h5>
+
+                <p class="text-center mb-4">
+                    <strong>{{ object.title }}</strong> - {{ object.amount }}円
+                </p>
+
+                <form method="post" class="d-flex justify-content-center flex-column flex-sm-row gap-2">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger btn-sm">削除する</button>
+                    <a href="{% url 'record_list' %}" class="btn btn-secondary btn-sm">キャンセル</a>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
