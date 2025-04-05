@@ -41,7 +41,6 @@ class HomeView(LoginRequiredMixin, TemplateView):
             .order_by('year', 'month')
         )
 
-        # データ初期化（1〜12月）
         def init_month_data():
             return {m: 0 for m in range(1, 13)}
 
@@ -63,7 +62,6 @@ class HomeView(LoginRequiredMixin, TemplateView):
                 else:
                     expense_last_year[m] = r['total']
 
-        # 月ラベル（1〜12月）
         labels_ym = [f'{m}月' for m in range(1, 13)]
 
         context.update({
@@ -78,25 +76,30 @@ class HomeView(LoginRequiredMixin, TemplateView):
         first_day_this_month = today.replace(day=1)
         first_day_last_month = (first_day_this_month - timedelta(days=1)).replace(day=1)
 
+        # 表示する2つの月ラベル（例：['2024-03', '2024-04']）
+        labels = [
+            first_day_last_month.strftime('%Y-%m'),
+            first_day_this_month.strftime('%Y-%m')
+        ]
+
+        short_term_data = {m: {'income': 0, 'expense': 0} for m in labels}
+
         short_term_records = (
             Record.objects
             .filter(user=user, date__gte=first_day_last_month)
             .annotate(month=TruncMonth('date'))
             .values('month', 'item_type')
             .annotate(total=Sum('amount'))
-            .order_by('month')
         )
 
-        # データ整形
-        short_term_data = defaultdict(lambda: {'income': 0, 'expense': 0})
         for r in short_term_records:
             month = r['month'].strftime('%Y-%m')
-            short_term_data[month][r['item_type']] = r['total']
+            if month in short_term_data:
+                short_term_data[month][r['item_type']] = r['total']
 
-        months = sorted(short_term_data.keys())
-        context['labels'] = months
-        context['income_data'] = [short_term_data[m]['income'] for m in months]
-        context['expense_data'] = [short_term_data[m]['expense'] for m in months]
+        context['labels'] = labels
+        context['income_data'] = [short_term_data[m]['income'] for m in labels]
+        context['expense_data'] = [short_term_data[m]['expense'] for m in labels]
 
         return context
 
