@@ -11,6 +11,6 @@ class TemplateRecordForm(forms.Form):
     date = forms.DateField(label='日付', initial=now, widget=forms.DateInput(attrs={'type': 'date'}))
 
     def __init__(self, *args, **kwargs):
-        user = kwargs.pop('user')  # ログインユーザーを受け取る
+        user = kwargs.pop('user')  
         super().__init__(*args, **kwargs)
         self.fields['template'].queryset = TemplateItem.objects.filter(user=user)
