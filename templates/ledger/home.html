@@ -41,19 +41,22 @@
         <div class="card shadow-sm h-100 p-3 p-lg-4">
             <div class="card-body">
                 <h5 class="card-title fs-5 fs-lg-4 mb-3">グラフ表示</h5>
-
-                <!-- グラフ切り替えボタン -->
-                <div class="mb-3 d-flex gap-2 flex-wrap">
+    
+                <!-- レスポンシブ対応のグラフ -->
+                <div style="width: 100%; overflow-x: auto;">
+                    <canvas id="myChart" class="w-100" style="min-height: 250px; height: auto;"></canvas>
+                </div>
+    
+                <!-- 切り替えボタン群 -->
+                <div class="mt-3 d-flex flex-wrap gap-2">
                     <button class="btn btn-outline-primary btn-sm" onclick="setGraphType('expense')">支出</button>
                     <button class="btn btn-outline-success btn-sm" onclick="setGraphType('income')">収入</button>
                     <button id="modeToggle" class="btn btn-outline-dark btn-sm" onclick="toggleYearMode()">今年 vs 昨年</button>
                 </div>
-
-                <canvas id="myChart" class="w-100" style="min-height: 250px;"></canvas>
             </div>
         </div>
     </div>
-</div>
+
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
