@@ -17,9 +17,88 @@ from collections import defaultdict
 from django.db.models.functions import TruncMonth
 from django.db.models.functions import TruncDate
 from datetime import date
+from datetime import timedelta
+from django.db.models.functions import ExtractMonth, ExtractYear
+
 
 class HomeView(LoginRequiredMixin, TemplateView):
     template_name = 'ledger/home.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        today = now().date()
+        year = today.year
+        last_year = year - 1
+
+        # 今年と昨年の全レコードを取得
+        records = (
+            Record.objects
+            .filter(user=user, date__year__in=[last_year, year])
+            .annotate(month=ExtractMonth('date'), year=ExtractYear('date'))
+            .values('year', 'month', 'item_type')
+            .annotate(total=Sum('amount'))
+            .order_by('year', 'month')
+        )
+
+        # データ初期化（1〜12月）
+        def init_month_data():
+            return {m: 0 for m in range(1, 13)}
+
+        income_this_year = init_month_data()
+        expense_this_year = init_month_data()
+        income_last_year = init_month_data()
+        expense_last_year = init_month_data()
+
+        for r in records:
+            y, m, t = r['year'], r['month'], r['item_type']
+            if y == year:
+                if t == 'income':
+                    income_this_year[m] = r['total']
+                else:
+                    expense_this_year[m] = r['total']
+            elif y == last_year:
+                if t == 'income':
+                    income_last_year[m] = r['total']
+                else:
+                    expense_last_year[m] = r['total']
+
+        # 月ラベル（1〜12月）
+        labels_ym = [f'{m}月' for m in range(1, 13)]
+
+        context.update({
+            'labels_yearly': labels_ym,
+            'income_this_year': list(income_this_year.values()),
+            'income_last_year': list(income_last_year.values()),
+            'expense_this_year': list(expense_this_year.values()),
+            'expense_last_year': list(expense_last_year.values()),
+        })
+
+        # 今月と先月の比較データ（短期用）
+        first_day_this_month = today.replace(day=1)
+        first_day_last_month = (first_day_this_month - timedelta(days=1)).replace(day=1)
+
+        short_term_records = (
+            Record.objects
+            .filter(user=user, date__gte=first_day_last_month)
+            .annotate(month=TruncMonth('date'))
+            .values('month', 'item_type')
+            .annotate(total=Sum('amount'))
+            .order_by('month')
+        )
+
+        # データ整形
+        short_term_data = defaultdict(lambda: {'income': 0, 'expense': 0})
+        for r in short_term_records:
+            month = r['month'].strftime('%Y-%m')
+            short_term_data[month][r['item_type']] = r['total']
+
+        months = sorted(short_term_data.keys())
+        context['labels'] = months
+        context['income_data'] = [short_term_data[m]['income'] for m in months]
+        context['expense_data'] = [short_term_data[m]['expense'] for m in months]
+
+        return context
 
 class TemplateItemConnectionView(LoginRequiredMixin, TemplateView):
     template_name = 'ledger/templateitem_connection.html'
@@ -62,7 +141,7 @@ class RecordConnectionView(LoginRequiredMixin, TemplateView):
     
 class RecordCreateView(LoginRequiredMixin, CreateView):
     model = Record
-    fields = ['title', 'amount', 'item_type', 'receipt_image']
+    fields = ['title', 'amount', 'item_type', 'date', 'receipt_image']
     template_name = 'ledger/record_form.html'
     success_url = reverse_lazy('home')
 
@@ -83,6 +162,7 @@ class TemplateToRecordView(LoginRequiredMixin, FormView):
     def form_valid(self, form):
         template = form.cleaned_data['template']
         quantity = form.cleaned_data['quantity']
+        date = form.cleaned_data['date']  # 日付を取得
 
         # Record モデルに保存
         Record.objects.create(
@@ -90,6 +170,7 @@ class TemplateToRecordView(LoginRequiredMixin, FormView):
             title=f"{template.name} * {quantity}",
             amount=template.price * quantity,
             item_type=template.item_type,
+            date=date  # ← 追加  
         )
 
         return super().form_valid(form)
@@ -151,7 +232,7 @@ class RecordListView(LoginRequiredMixin, TemplateView):
     
 class RecordUpdateView(LoginRequiredMixin, UpdateView):
     model = Record
-    fields = ['title', 'amount', 'item_type', 'receipt_image']
+    fields = ['title', 'amount', 'item_type', 'date', 'receipt_image']
     template_name = 'ledger/record_form.html'
     success_url = reverse_lazy('record_list')
 

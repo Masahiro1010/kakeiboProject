@@ -42,8 +42,9 @@
             <div class="collapse navbar-collapse bg-dark px-3 py-2" id="navbarNav">
                 <ul class="navbar-nav ms-auto flex-column flex-lg-row">
                     <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">ホーム</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'templateitem_connection' %}">テンプレート操作</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'record_connection' %}">記録入力</a></li>
                     <li class="nav-item"><a class="nav-link" href="{% url 'record_list' %}">記録一覧</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'chart' %}">グラフ</a></li>
                     <li class="nav-item d-flex align-items-center ms-lg-2">
                         <form method="post" action="{% url 'logout' %}" class="m-0">
                             {% csrf_token %}
