@@ -1,0 +1,14 @@
+{% extends 'ledger/base.html' %}
+
+{% block title %}LINE連携{% endblock %}
+
+{% block content %}
+<h2>LINEアカウントと連携</h2>
+<p>LINEのBotで取得したユーザーIDを入力してください。</p>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">連携する</button>
+</form>
+{% endblock %}

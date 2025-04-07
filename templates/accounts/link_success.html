@@ -1,0 +1,9 @@
+{% extends 'ledger/base.html' %}
+
+{% block title %}連携成功{% endblock %}
+
+{% block content %}
+<h2>LINEアカウントと連携しました！</h2>
+<p>連携されたLINE ID：{{ line_user_id }}</p>
+<a href="{% url 'home' %}" class="btn btn-success mt-3">ホームに戻る</a>
+{% endblock %}
