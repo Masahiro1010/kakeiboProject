@@ -24,7 +24,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path('', include('accounts.urls')), 
     path('ledger', include('ledger.urls')), 
-    path('line/', include('linebot.urls')),
+    path('line/', include('linehandler.urls')),
 ]
 
 if settings.DEBUG:
