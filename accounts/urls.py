@@ -7,4 +7,5 @@ urlpatterns = [
     path('login/', views.LoginView.as_view(), name='login'),
     path('logout/', DjangoLogoutView.as_view(), name='logout'),
     path('link-line/', views.LineLinkView.as_view(), name='link_line'),
+    path('link-line/success/', views.LinkSuccessView.as_view(), name='link_success'),
 ]
