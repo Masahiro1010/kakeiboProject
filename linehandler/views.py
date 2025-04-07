@@ -1,18 +1,17 @@
 import os
+import re
 from django.http import HttpResponse, HttpResponseForbidden
-from django.views.decorators.csrf import csrf_exempt
 from django.views import View
+from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 
 from linebot import LineBotApi, WebhookParser
 from linebot.exceptions import InvalidSignatureError
 from linebot.models import MessageEvent, TextMessage, TextSendMessage
 
-from ledger.models import TemplateItem, Record
-from accounts.models import UserProfile  # ← ユーザー紐づけ用
-from .utils import parse_template_message  # メッセージ解析用（utils.py）
+from ledger.models import Record, TemplateItem
+from accounts.models import UserProfile
 
-# LINEチャンネルのトークンとシークレット
 line_bot_api = LineBotApi(os.environ.get("LINE_CHANNEL_ACCESS_TOKEN"))
 parser = WebhookParser(os.environ.get("LINE_CHANNEL_SECRET"))
 
@@ -29,48 +28,66 @@ class LineWebhookView(View):
 
         for event in events:
             if isinstance(event, MessageEvent) and isinstance(event.message, TextMessage):
-                user_message = event.message.text
-                line_user_id = event.source.user_id  # LINEのユーザーID
+                message = event.message.text.strip()
+                user_id = event.source.user_id
 
-                # 1. LINEユーザーをDjangoユーザーに紐づけ
                 try:
-                    user_profile = UserProfile.objects.get(line_user_id=line_user_id)
-                    user = user_profile.user
+                    profile = UserProfile.objects.get(line_user_id=user_id)
+                    user = profile.user
                 except UserProfile.DoesNotExist:
-                    ##reply_text = "このLINEアカウントは未登録です。WebでログインしてLINEと連携してください。"
-                    reply_text = f"あなたのLINE IDは：{line_user_id}\nこのIDをコピーしてWebで連携してください！"
-                    line_bot_api.reply_message(
-                        event.reply_token,
-                        TextSendMessage(text=reply_text)
-                    )
-                    return HttpResponse("Unauthorized")
+                    reply = TextSendMessage(text="このLINEアカウントは未登録です。\nWebでログインしてLINE連携してください。")
+                    line_bot_api.reply_message(event.reply_token, reply)
+                    return HttpResponse("OK")
 
-                # 2. メッセージをテンプレート入力として解析
-                parsed = parse_template_message(user_message)
+                # 全角・半角スペースに対応
+                parts = re.split(r'[\s\u3000]+', message)
 
-                if parsed:
-                    name = parsed['name']
-                    quantity = parsed['quantity']
+                reply_text = ""
 
-                    try:
-                        template = TemplateItem.objects.get(user=user, name=name)
-                        total = template.price * quantity
+                # 2語ならテンプレート入力
+                if len(parts) == 2:
+                    template_name, quantity_str = parts
+                    if quantity_str.isdigit():
+                        try:
+                            template = TemplateItem.objects.get(user=user, name=template_name)
+                            quantity = int(quantity_str)
+                            Record.objects.create(
+                                user=user,
+                                title=f"{template.name} × {quantity}",
+                                amount=template.price * quantity,
+                                item_type=template.item_type,
+                            )
+                            reply_text = f"✅ テンプレート「{template.name}」を{quantity}個登録しました！"
+                        except TemplateItem.DoesNotExist:
+                            reply_text = f"「{template_name}」というテンプレートは見つかりませんでした。"
 
+                # 3語なら個別入力
+                elif len(parts) == 3:
+                    title, amount_str, item_type_text = parts
+                    if amount_str.isdigit() and item_type_text in ['支出', '収入']:
+                        item_type = 'expense' if item_type_text == '支出' else 'income'
                         Record.objects.create(
                             user=user,
-                            title=f"{template.name} × {quantity}",
-                            amount=total,
-                            item_type=template.item_type
+                            title=title,
+                            amount=int(amount_str),
+                            item_type=item_type,
                         )
-                        reply_text = f"「{template.name}」を{quantity}個、{total}円で記録しました！"
-
-                    except TemplateItem.DoesNotExist:
-                        reply_text = f"「{name}」はテンプレートに登録されていません。"
+                        reply_text = f"✅ 「{title}」を{amount_str}円（{item_type_text}）として登録しました！"
+                    else:
+                        reply_text = "形式が間違っているようです。\n「タイトル 金額 支出or収入」の形にしてください。"
 
                 else:
-                    reply_text = "テンプレート形式で送ってください（例：弁当 2個）"
+                    # フォーマットミス or その他メッセージ
+                    reply_text = (
+                        "⚠️ メッセージ形式が認識できませんでした。\n\n"
+                        "🟢 テンプレート入力（2語）：\n"
+                        "例）水 2\n\n"
+                        "🟡 個別入力（3語）：\n"
+                        "例）昼ごはん 900 支出\n\n"
+                        "※ スペースは半角でも全角でもOKです。"
+                    )
 
-                # 3. LINEに返信
+                # LINEに返信
                 line_bot_api.reply_message(
                     event.reply_token,
                     TextSendMessage(text=reply_text)
