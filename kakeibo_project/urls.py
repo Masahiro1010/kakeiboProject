@@ -22,8 +22,9 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path('', include('accounts.urls')),  # 追加
-    path('ledger', include('ledger.urls')),  # 追加
+    path('', include('accounts.urls')), 
+    path('ledger', include('ledger.urls')), 
+    path('line/', include('linebot.urls')),
 ]
 
 if settings.DEBUG:
