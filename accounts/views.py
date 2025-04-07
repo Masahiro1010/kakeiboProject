@@ -22,7 +22,7 @@ class LineLinkView(LoginRequiredMixin, FormView):
 
     def form_valid(self, form):
         line_id = form.cleaned_data['line_user_id']
-        profile = self.request.user.userprofile
+        profile, created = UserProfile.objects.get_or_create(user=self.request.user)
         profile.line_user_id = line_id
         profile.save()
         return super().form_valid(form)
