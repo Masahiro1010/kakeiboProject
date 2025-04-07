@@ -16,7 +16,7 @@ class LoginView(DjangoLoginView):
     template_name = 'accounts/login.html'
 
 class LineLinkView(LoginRequiredMixin, FormView):
-    template_name = 'accounts/link_line.html'
+    template_name = 'accounts/link_link.html'
     form_class = LineLinkForm
     success_url = reverse_lazy('link_success')
 
