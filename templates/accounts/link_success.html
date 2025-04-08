@@ -1,9 +1,24 @@
 {% extends 'ledger/base.html' %}
 
 {% block title %}連携成功{% endblock %}
+{% block brand_title %}{{ user.username }}さんの会計簿{% endblock %}
 
 {% block content %}
-<h2>LINEアカウントと連携しました！</h2>
-<p>連携されたLINE ID：{{ line_user_id }}</p>
-<a href="{% url 'home' %}" class="btn btn-success mt-3">ホームに戻る</a>
+<div class="row justify-content-center">
+    <div class="col-12 col-md-8 col-lg-6">
+        <div class="card shadow-sm">
+            <div class="card-body px-3 py-4 text-center">
+
+                <h5 class="card-title fs-5 fs-lg-4 mb-3">LINEアカウントと連携しました！</h5>
+
+                <p class="text-success mb-4" style="font-size: 0.95rem;">
+                    ✅ 連携されたLINE ID：<strong>{{ line_user_id }}</strong>
+                </p>
+
+                <a href="{% url 'home' %}" class="btn btn-success btn-sm w-100">ホームに戻る</a>
+
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
