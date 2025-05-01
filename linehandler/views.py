@@ -35,7 +35,7 @@ class LineWebhookView(View):
                     profile = UserProfile.objects.get(line_user_id=user_id)
                     user = profile.user
                 except UserProfile.DoesNotExist:
-                    reply = TextSendMessage(text="このLINEアカウントは未登録です。\nWebでログインしてLINE連携してください。")
+                    reply = TextSendMessage(text=f"このLINEアカウントは未登録です。\nWebでログインしてLINE連携してください。\n LINEユーザーID:{user_id}をWebで登録してください。")
                     line_bot_api.reply_message(event.reply_token, reply)
                     return HttpResponse("OK")
 
