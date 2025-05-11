@@ -7,6 +7,7 @@ from django.contrib.auth.views import LoginView as DjangoLoginView
 from .forms import LineLinkForm
 from .models import UserProfile
 from django.views.generic import TemplateView
+from django.contrib.auth import login
 
 class SignupView(CreateView):
     form_class = UserCreationForm
@@ -15,6 +16,18 @@ class SignupView(CreateView):
 
 class LoginView(DjangoLoginView):
     template_name = 'accounts/login.html'
+
+    def form_valid(self, form):
+        remember_me = self.request.POST.get('remember_me')
+
+        if remember_me:
+            self.request.session.set_expiry(60 * 10 * 1 * 1)  # 10分間
+        else:
+            self.request.session.set_expiry(0)  # ブラウザ閉じたらログアウト
+
+        login(self.request, form.get_user())
+
+        return super().form_valid(form)
 
 class LineLinkView(LoginRequiredMixin, FormView):
     template_name = 'accounts/link_link.html'
