@@ -34,34 +34,31 @@ class LineWebhookView(View):
                 message = event.message.text.strip()
                 user_id = event.source.user_id
 
-                # 🔓 連携解除コマンド
+                # 🔓 連携解除
                 if message in ['連携解除', '解除', 'unregister']:
                     try:
                         profile = UserProfile.objects.get(line_user_id=user_id)
                         profile.line_user_id = None
-
-                        # ✅ 新しい連携コードを再発行
-                        new_code = ''.join(random.choices(string.digits, k=6))
-                        profile.link_code = new_code
+                        profile.link_code = ''.join(random.choices(string.digits, k=6))
                         profile.save()
 
                         reply = TextSendMessage(
                             text=(
                                 "🔓 LINE連携を解除しました。\n"
-                                "再度Webでログインして新しい連携コードを確認してください。"
+                                "再度Webでログインし、新しい6桁の連携コードをLINEに送信してください。"
                             )
                         )
                     except UserProfile.DoesNotExist:
-                        reply = TextSendMessage(text="⚠️ このLINEアカウントは連携されていません。")
+                        reply = TextSendMessage(text="⚠️ このLINEアカウントはまだ連携されていません。")
                     line_bot_api.reply_message(event.reply_token, reply)
                     return HttpResponse("OK")
 
-                # 🔐 連携コードによる連携処理（6桁数字）
+                # 🔐 6桁の連携コード処理
                 if message.isdigit() and len(message) == 6:
                     try:
                         profile = UserProfile.objects.get(link_code=message)
                         profile.line_user_id = user_id
-                        profile.link_code = ''  # 一度使ったら削除
+                        profile.link_code = ''
                         profile.save()
 
                         reply = TextSendMessage(
@@ -72,29 +69,34 @@ class LineWebhookView(View):
                                 "https://kakeiboproject.onrender.com/ledger"
                             )
                         )
+                        line_bot_api.reply_message(event.reply_token, reply)
+                        return HttpResponse("OK")
                     except UserProfile.DoesNotExist:
-                        reply = TextSendMessage(text="⚠️ 無効な連携コードです。Webアプリで連携コードを確認してください。")
-                    line_bot_api.reply_message(event.reply_token, reply)
-                    return HttpResponse("OK")
+                        reply = TextSendMessage(
+                            text="⚠️ 無効な連携コードです。\nWebアプリでログインして正しいコードを確認してください。"
+                        )
+                        line_bot_api.reply_message(event.reply_token, reply)
+                        return HttpResponse("OK")
 
-                # 📎 LINE連携済みユーザーか確認
+                # 📎 連携済みユーザーか確認
                 try:
                     profile = UserProfile.objects.get(line_user_id=user_id)
                     user = profile.user
                 except UserProfile.DoesNotExist:
                     reply = TextSendMessage(
-                        text="このLINEアカウントは未登録です。\nWebでログインして連携コードを取得し、LINEに送信してください。\n\n"
-                        "https://kakeiboproject.onrender.com/link-line/\n"
-                        "先ほど閲覧されたこのURLに書かれた6桁の確認コードをこの公式LINEのチャットに送信してください。"
+                        text=(
+                            "⚠️ このLINEアカウントはまだ連携されていません。\n"
+                            "以下のURLからログインし、表示された6桁の連携コードをLINEに送ってください。\n\n"
+                            "🔗 https://kakeiboproject.onrender.com/link-line/"
+                        )
                     )
                     line_bot_api.reply_message(event.reply_token, reply)
                     return HttpResponse("OK")
 
-                # ✅ 入力メッセージの解析
-                parts = re.split(r'[\s\u3000]+', message)  # 半角・全角スペース対応
+                # ✅ 入力の判定と記録処理
+                parts = re.split(r'[\s\u3000]+', message)
                 reply_text = ""
 
-                # 2語 → テンプレート入力
                 if len(parts) == 2:
                     template_name, quantity_str = parts
                     if quantity_str.isdigit():
@@ -109,9 +111,8 @@ class LineWebhookView(View):
                             )
                             reply_text = f"✅ テンプレート「{template.name}」を{quantity}個登録しました！"
                         except TemplateItem.DoesNotExist:
-                            reply_text = f"「{template_name}」というテンプレートは見つかりませんでした。"
+                            reply_text = f"⚠️ 「{template_name}」というテンプレートは見つかりませんでした。"
 
-                # 3語 → 個別入力
                 elif len(parts) == 3:
                     title, amount_str, item_type_text = parts
                     if amount_str.isdigit() and item_type_text in ['支出', '収入']:
@@ -124,24 +125,18 @@ class LineWebhookView(View):
                         )
                         reply_text = f"✅ 「{title}」を{amount_str}円（{item_type_text}）として登録しました！"
                     else:
-                        reply_text = "形式が間違っています。\n「タイトル 金額 支出or収入」の形式で入力してください。"
+                        reply_text = "⚠️ 形式エラー：「タイトル 金額 支出or収入」の形式で入力してください。"
 
                 else:
                     reply_text = (
                         "⚠️ メッセージ形式が認識できませんでした。\n\n"
-                        "🟢 テンプレート入力（2語）：\n"
-                        "例）水 2\n\n"
-                        "🟡 個別入力（3語）：\n"
-                        "例）昼ごはん 900 支出\n\n"
-                        "🟣 LINE連携（6桁コード）：\n"
-                        "Webで表示された6桁のコードを送ってください。\n\n"
-                        "🔓 連携解除：\n"
-                        "「連携解除」と送ると連携を解除できます\n\n"
-                        "🌐 Web版はこちら👇\n"
-                        "https://kakeiboproject.onrender.com/ledger"
+                        "🟢 テンプレート入力（例）：水 2\n"
+                        "🟡 個別入力（例）：昼ごはん 900 支出\n"
+                        "🟣 連携コード（例）：123456\n"
+                        "🔓 連携解除：連携解除\n\n"
+                        "🌐 Web版：https://kakeiboproject.onrender.com/ledger"
                     )
 
-                # 最終返信
                 line_bot_api.reply_message(
                     event.reply_token,
                     TextSendMessage(text=reply_text)

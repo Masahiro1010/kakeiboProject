@@ -35,13 +35,19 @@ class LoginView(DjangoLoginView):
 class LineLinkView(LoginRequiredMixin, TemplateView):
     template_name = 'accounts/link_link.html'
 
+    # ✅ 重複しない連携コード（6桁）を生成する関数
+    def generate_unique_code(self):
+        while True:
+            code = ''.join(random.choices(string.digits, k=6))
+            if not UserProfile.objects.filter(link_code=code).exists():
+                return code
+
     def get(self, request, *args, **kwargs):
         profile, _ = UserProfile.objects.get_or_create(user=request.user)
 
         # まだ連携済みでない場合はコードを発行
         if not profile.line_user_id and not profile.link_code:
-            code = ''.join(random.choices(string.digits, k=6))
-            profile.link_code = code
+            profile.link_code = self.generate_unique_code()
             profile.save()
 
         return super().get(request, *args, **kwargs)
