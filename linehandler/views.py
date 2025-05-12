@@ -1,5 +1,8 @@
 import os
 import re
+import random
+import string
+
 from django.http import HttpResponse, HttpResponseForbidden
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
@@ -36,20 +39,31 @@ class LineWebhookView(View):
                     try:
                         profile = UserProfile.objects.get(line_user_id=user_id)
                         profile.line_user_id = None
+
+                        # ✅ 新しい連携コードを再発行
+                        new_code = ''.join(random.choices(string.digits, k=6))
+                        profile.link_code = new_code
                         profile.save()
-                        reply = TextSendMessage(text="🔓 LINE連携を解除しました。\n必要であれば再度Webから連携してください。")
+
+                        reply = TextSendMessage(
+                            text=(
+                                "🔓 LINE連携を解除しました。\n"
+                                "再度Webでログインして新しい連携コードを確認してください。"
+                            )
+                        )
                     except UserProfile.DoesNotExist:
                         reply = TextSendMessage(text="⚠️ このLINEアカウントは連携されていません。")
                     line_bot_api.reply_message(event.reply_token, reply)
                     return HttpResponse("OK")
 
-                # 🔐 連携コードによる認証処理（6桁の数字）
+                # 🔐 連携コードによる連携処理（6桁数字）
                 if message.isdigit() and len(message) == 6:
                     try:
                         profile = UserProfile.objects.get(link_code=message)
                         profile.line_user_id = user_id
-                        profile.link_code = ''  # 一度使ったら破棄
+                        profile.link_code = ''  # 一度使ったら削除
                         profile.save()
+
                         reply = TextSendMessage(
                             text=(
                                 "✅ LINE連携が完了しました！\n"
@@ -69,7 +83,9 @@ class LineWebhookView(View):
                     user = profile.user
                 except UserProfile.DoesNotExist:
                     reply = TextSendMessage(
-                        text="このLINEアカウントは未登録です。\nWebでログインして連携コードを取得し、LINEに送信してください。"
+                        text="このLINEアカウントは未登録です。\nWebでログインして連携コードを取得し、LINEに送信してください。\n\n"
+                        "https://kakeiboproject.onrender.com/link-line/\n"
+                        "先ほど閲覧されたこのURLに書かれた6桁の確認コードをこの公式LINEのチャットに送信してください。"
                     )
                     line_bot_api.reply_message(event.reply_token, reply)
                     return HttpResponse("OK")
@@ -78,7 +94,7 @@ class LineWebhookView(View):
                 parts = re.split(r'[\s\u3000]+', message)  # 半角・全角スペース対応
                 reply_text = ""
 
-                # 2語ならテンプレート入力
+                # 2語 → テンプレート入力
                 if len(parts) == 2:
                     template_name, quantity_str = parts
                     if quantity_str.isdigit():
@@ -95,7 +111,7 @@ class LineWebhookView(View):
                         except TemplateItem.DoesNotExist:
                             reply_text = f"「{template_name}」というテンプレートは見つかりませんでした。"
 
-                # 3語なら個別入力
+                # 3語 → 個別入力
                 elif len(parts) == 3:
                     title, amount_str, item_type_text = parts
                     if amount_str.isdigit() and item_type_text in ['支出', '収入']:
@@ -108,10 +124,9 @@ class LineWebhookView(View):
                         )
                         reply_text = f"✅ 「{title}」を{amount_str}円（{item_type_text}）として登録しました！"
                     else:
-                        reply_text = "形式が間違っているようです。\n「タイトル 金額 支出or収入」の形にしてください。"
+                        reply_text = "形式が間違っています。\n「タイトル 金額 支出or収入」の形式で入力してください。"
 
                 else:
-                    # フォーマットミス or その他メッセージ
                     reply_text = (
                         "⚠️ メッセージ形式が認識できませんでした。\n\n"
                         "🟢 テンプレート入力（2語）：\n"
