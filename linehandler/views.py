@@ -39,7 +39,18 @@ class LineWebhookView(View):
                         profile.link_code = ''  # 一度使ったら破棄
                         profile.save()
 
-                        reply = TextSendMessage(text="✅ LINE連携が完了しました！\nこれからLINEから記録を送信できます。")
+                        reply = TextSendMessage(text=(
+                            "✅ LINE連携が完了しました！\n"
+                            "これからLINEから記録を送信できます。\n\n"
+                            "📘 Web版はこちらからいつでも確認できます👇\n"
+                            "https://kakeiboproject.onrender.com/ledger\n\n\n"
+                            "メッセージは以下のように送信してください。\n"
+                            "🟢 テンプレート入力（2語）：\n"
+                            "例）水 2\n\n"
+                            "🟡 個別入力（3語）：\n"
+                            "例）昼ごはん 900 支出\n\n"
+                            "※ スペースは半角でも全角でもOKです。"
+                        ))
                         line_bot_api.reply_message(event.reply_token, reply)
                         return HttpResponse("OK")
                     except UserProfile.DoesNotExist:
@@ -102,9 +113,9 @@ class LineWebhookView(View):
                         "例）水 2\n\n"
                         "🟡 個別入力（3語）：\n"
                         "例）昼ごはん 900 支出\n\n"
-                        "🟣 LINE連携（6桁コード）：\n"
-                        "Webで表示された6桁のコードを送ってください。\n\n"
-                        "※ スペースは半角でも全角でもOKです。"
+                        "※ スペースは半角でも全角でもOKです。\n\n\n"
+                        "📘 Web版はこちらからいつでも確認できます👇\n"
+                        "https://kakeiboproject.onrender.com/ledger"
                     )
 
                 # 最終返信
