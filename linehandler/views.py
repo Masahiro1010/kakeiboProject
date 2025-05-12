@@ -31,17 +31,35 @@ class LineWebhookView(View):
                 message = event.message.text.strip()
                 user_id = event.source.user_id
 
+                # 🔐 連携コードによる認証処理（6桁の数字）
+                if message.isdigit() and len(message) == 6:
+                    try:
+                        profile = UserProfile.objects.get(link_code=message)
+                        profile.line_user_id = user_id
+                        profile.link_code = ''  # 一度使ったら破棄
+                        profile.save()
+
+                        reply = TextSendMessage(text="✅ LINE連携が完了しました！\nこれからLINEから記録を送信できます。")
+                        line_bot_api.reply_message(event.reply_token, reply)
+                        return HttpResponse("OK")
+                    except UserProfile.DoesNotExist:
+                        reply = TextSendMessage(text="⚠️ 無効な連携コードです。Webアプリで連携コードを確認してください。")
+                        line_bot_api.reply_message(event.reply_token, reply)
+                        return HttpResponse("OK")
+
+                # 📎 LINE連携済みユーザーか確認
                 try:
                     profile = UserProfile.objects.get(line_user_id=user_id)
                     user = profile.user
                 except UserProfile.DoesNotExist:
-                    reply = TextSendMessage(text=f"このLINEアカウントは未登録です。\nWebでログインしてLINE連携してください。\n LINEユーザーID:{user_id}をWebで登録してください。")
+                    reply = TextSendMessage(
+                        text="このLINEアカウントは未登録です。\nWebでログインして連携コードを取得し、LINEに送信してください。"
+                    )
                     line_bot_api.reply_message(event.reply_token, reply)
                     return HttpResponse("OK")
 
-                # 全角・半角スペースに対応
-                parts = re.split(r'[\s\u3000]+', message)
-
+                # ✅ 入力メッセージの解析
+                parts = re.split(r'[\s\u3000]+', message)  # 半角・全角スペース対応
                 reply_text = ""
 
                 # 2語ならテンプレート入力
@@ -84,15 +102,15 @@ class LineWebhookView(View):
                         "例）水 2\n\n"
                         "🟡 個別入力（3語）：\n"
                         "例）昼ごはん 900 支出\n\n"
+                        "🟣 LINE連携（6桁コード）：\n"
+                        "Webで表示された6桁のコードを送ってください。\n\n"
                         "※ スペースは半角でも全角でもOKです。"
                     )
 
-                # LINEに返信
+                # 最終返信
                 line_bot_api.reply_message(
                     event.reply_token,
                     TextSendMessage(text=reply_text)
                 )
 
         return HttpResponse("OK")
-
-# Create your views here.

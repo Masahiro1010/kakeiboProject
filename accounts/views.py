@@ -8,6 +8,8 @@ from .forms import LineLinkForm
 from .models import UserProfile
 from django.views.generic import TemplateView
 from django.contrib.auth import login
+import random
+import string
 
 class SignupView(CreateView):
     form_class = UserCreationForm
@@ -16,7 +18,7 @@ class SignupView(CreateView):
 
 class LoginView(DjangoLoginView):
     template_name = 'accounts/login.html'
-
+    """
     def form_valid(self, form):
         remember_me = self.request.POST.get('remember_me')
 
@@ -28,18 +30,28 @@ class LoginView(DjangoLoginView):
         login(self.request, form.get_user())
 
         return super().form_valid(form)
+    """
 
-class LineLinkView(LoginRequiredMixin, FormView):
+class LineLinkView(LoginRequiredMixin, TemplateView):
     template_name = 'accounts/link_link.html'
-    form_class = LineLinkForm
-    success_url = reverse_lazy('link_success')
 
-    def form_valid(self, form):
-        line_id = form.cleaned_data['line_user_id']
-        profile, created = UserProfile.objects.get_or_create(user=self.request.user)
-        profile.line_user_id = line_id
-        profile.save()
-        return super().form_valid(form)
+    def get(self, request, *args, **kwargs):
+        profile, _ = UserProfile.objects.get_or_create(user=request.user)
+
+        # まだ連携済みでない場合はコードを発行
+        if not profile.line_user_id and not profile.link_code:
+            code = ''.join(random.choices(string.digits, k=6))
+            profile.link_code = code
+            profile.save()
+
+        return super().get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        profile = self.request.user.userprofile
+        context['line_user_id'] = profile.line_user_id
+        context['link_code'] = profile.link_code
+        return context
     
 class LinkSuccessView(LoginRequiredMixin, TemplateView):
     template_name = 'accounts/link_success.html'
