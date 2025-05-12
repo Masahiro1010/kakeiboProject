@@ -18,7 +18,7 @@ class SignupView(CreateView):
 
 class LoginView(DjangoLoginView):
     template_name = 'accounts/login.html'
-    """
+    
     def form_valid(self, form):
         remember_me = self.request.POST.get('remember_me')
 
@@ -30,7 +30,6 @@ class LoginView(DjangoLoginView):
         login(self.request, form.get_user())
 
         return super().form_valid(form)
-    """
 
 class LineLinkView(LoginRequiredMixin, TemplateView):
     template_name = 'accounts/link_link.html'
