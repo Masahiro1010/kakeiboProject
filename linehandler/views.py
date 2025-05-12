@@ -15,7 +15,7 @@ from linebot.models import MessageEvent, TextMessage, TextSendMessage
 from ledger.models import Record, TemplateItem
 from accounts.models import UserProfile
 
-from views import LineLinkView
+from accounts.views import LineLinkView
 
 line_bot_api = LineBotApi(os.environ.get("LINE_CHANNEL_ACCESS_TOKEN"))
 parser = WebhookParser(os.environ.get("LINE_CHANNEL_SECRET"))
