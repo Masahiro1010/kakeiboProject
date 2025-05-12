@@ -31,6 +31,18 @@ class LineWebhookView(View):
                 message = event.message.text.strip()
                 user_id = event.source.user_id
 
+                # 🔓 連携解除コマンド
+                if message in ['連携解除', '解除', 'unregister']:
+                    try:
+                        profile = UserProfile.objects.get(line_user_id=user_id)
+                        profile.line_user_id = None
+                        profile.save()
+                        reply = TextSendMessage(text="🔓 LINE連携を解除しました。\n必要であれば再度Webから連携してください。")
+                    except UserProfile.DoesNotExist:
+                        reply = TextSendMessage(text="⚠️ このLINEアカウントは連携されていません。")
+                    line_bot_api.reply_message(event.reply_token, reply)
+                    return HttpResponse("OK")
+
                 # 🔐 連携コードによる認証処理（6桁の数字）
                 if message.isdigit() and len(message) == 6:
                     try:
@@ -38,25 +50,18 @@ class LineWebhookView(View):
                         profile.line_user_id = user_id
                         profile.link_code = ''  # 一度使ったら破棄
                         profile.save()
-
-                        reply = TextSendMessage(text=(
-                            "✅ LINE連携が完了しました！\n"
-                            "これからLINEから記録を送信できます。\n\n"
-                            "📘 Web版はこちらからいつでも確認できます👇\n"
-                            "https://kakeiboproject.onrender.com/ledger\n\n\n"
-                            "メッセージは以下のように送信してください。\n"
-                            "🟢 テンプレート入力（2語）：\n"
-                            "例）水 2\n\n"
-                            "🟡 個別入力（3語）：\n"
-                            "例）昼ごはん 900 支出\n\n"
-                            "※ スペースは半角でも全角でもOKです。"
-                        ))
-                        line_bot_api.reply_message(event.reply_token, reply)
-                        return HttpResponse("OK")
+                        reply = TextSendMessage(
+                            text=(
+                                "✅ LINE連携が完了しました！\n"
+                                "これからLINEから記録を送信できます。\n\n"
+                                "🌐 Web版はこちら👇\n"
+                                "https://kakeiboproject.onrender.com/ledger"
+                            )
+                        )
                     except UserProfile.DoesNotExist:
                         reply = TextSendMessage(text="⚠️ 無効な連携コードです。Webアプリで連携コードを確認してください。")
-                        line_bot_api.reply_message(event.reply_token, reply)
-                        return HttpResponse("OK")
+                    line_bot_api.reply_message(event.reply_token, reply)
+                    return HttpResponse("OK")
 
                 # 📎 LINE連携済みユーザーか確認
                 try:
@@ -113,8 +118,11 @@ class LineWebhookView(View):
                         "例）水 2\n\n"
                         "🟡 個別入力（3語）：\n"
                         "例）昼ごはん 900 支出\n\n"
-                        "※ スペースは半角でも全角でもOKです。\n\n\n"
-                        "📘 Web版はこちらからいつでも確認できます👇\n"
+                        "🟣 LINE連携（6桁コード）：\n"
+                        "Webで表示された6桁のコードを送ってください。\n\n"
+                        "🔓 連携解除：\n"
+                        "「連携解除」と送ると連携を解除できます\n\n"
+                        "🌐 Web版はこちら👇\n"
                         "https://kakeiboproject.onrender.com/ledger"
                     )
 
