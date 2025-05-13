@@ -142,3 +142,11 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 SESSION_COOKIE_AGE = 60 * 10 * 1 * 1  # 10分間
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False  # ブラウザ閉じてもログアウトしない
+
+# CSRFトークン用Cookie
+CSRF_COOKIE_SAMESITE = 'Lax'  # 'None' でもよいが、その場合 Secure=True 必須
+CSRF_COOKIE_SECURE = True     # httpsでないと無効（RenderではTrueが必要）
+
+# セッションクッキーの設定も念のため
+SESSION_COOKIE_SAMESITE = 'Lax'
+SESSION_COOKIE_SECURE = True

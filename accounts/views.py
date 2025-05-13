@@ -27,8 +27,6 @@ class LoginView(DjangoLoginView):
         else:
             self.request.session.set_expiry(0)  # ブラウザ閉じたらログアウト
 
-        login(self.request, form.get_user())
-
         return super().form_valid(form)
 
 class LineLinkView(LoginRequiredMixin, TemplateView):
