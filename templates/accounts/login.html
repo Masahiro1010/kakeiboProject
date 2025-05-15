@@ -41,12 +41,6 @@
     <div class="container">
         <div class="login-wrapper">
 
-            <!-- アプリの紹介エリア -->
-            <div class="app-intro">
-                <h1>RecoReco</h1>
-                <p>完璧すぎない分、続けられる。<br>シンプルでやさしい会計簿アプリ。</p>
-            </div>
-
             <!-- LINE内ブラウザ対策の注意 -->
             <div id="browser-warning" class="alert alert-warning text-center" style="display: none; font-size: 0.9rem;">
                 ⚠️ 現在LINEアプリ内で開かれています。<br>
@@ -54,6 +48,12 @@
                 
             </div>
 
+            <!-- アプリの紹介エリア -->
+            <div class="app-intro">
+                <h1>RecoReco</h1>
+                <p>完璧すぎない分、続けられる。<br>シンプルでやさしい会計簿アプリ。</p>
+            </div>
+            
             <!-- ログインカード -->
             <div class="card shadow-sm">
                 <div class="card-body p-4">
@@ -101,7 +101,7 @@
         if (isLine) {
             document.getElementById('browser-warning').style.display = 'block';
             const instruction = isIOS
-                ? '右上の「︙」 → 「Safariで開く」を選択してください。'
+                ? '右下の「︙」 → 「Safariで開く」を選択してください。'
                 : '右上の「︙」 → 「外部ブラウザで開く」を選択してください。';
             document.getElementById('browser-instruction').textContent = instruction;
         }
