@@ -1,5 +1,4 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -42,21 +41,17 @@
     <div class="container">
         <div class="login-wrapper">
 
-            <!-- ⚠️ WebViewからのアクセスへの警告 -->
-            <div id="webview-warning" class="alert alert-warning text-center mb-3 d-none" style="font-size: 0.9rem;">
-                このページは Safari または Chrome で開いてください。<br>
-                LINEやInstagram内ではログインできない場合があります。
-                <div class="mt-2">
-                    <a href="https://kakeiboproject.onrender.com/login/" target="_blank" rel="noopener noreferrer" class="btn btn-outline-secondary w-100 mt-3">
-                        Safariで開く
-                    </a>
-                </div>
-            </div>
-
             <!-- アプリの紹介エリア -->
             <div class="app-intro">
                 <h1>RecoReco</h1>
                 <p>完璧すぎない分、続けられる。<br>シンプルでやさしい会計簿アプリ。</p>
+            </div>
+
+            <!-- LINE内ブラウザ対策の注意 -->
+            <div id="browser-warning" class="alert alert-warning text-center" style="display: none; font-size: 0.9rem;">
+                ⚠️ 現在LINEアプリ内で開かれています。<br>
+                正常にログインできない場合は、<span id="browser-instruction"></span>
+                
             </div>
 
             <!-- ログインカード -->
@@ -97,22 +92,21 @@
         </div>
     </div>
 
-    <!-- JSライブラリ -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
-    <!-- WebView検出スクリプト -->
     <script>
-        const ua = navigator.userAgent.toLowerCase();
-        const isInAppBrowser = (
-            ua.includes('line') ||
-            ua.includes('instagram') ||
-            ua.includes('twitter') ||
-            (ua.includes('fb') && ua.includes('messenger'))
-        );
-        if (isInAppBrowser) {
-            document.getElementById("webview-warning").classList.remove("d-none");
+        // LINEブラウザかどうか判定
+        const isLine = navigator.userAgent.toLowerCase().includes("line");
+        const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
+        const isAndroid = /Android/.test(navigator.userAgent);
+    
+        if (isLine) {
+            document.getElementById('browser-warning').style.display = 'block';
+            const instruction = isIOS
+                ? '右上の「︙」 → 「Safariで開く」を選択してください。'
+                : '右上の「︙」 → 「外部ブラウザで開く」を選択してください。';
+            document.getElementById('browser-instruction').textContent = instruction;
         }
     </script>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
