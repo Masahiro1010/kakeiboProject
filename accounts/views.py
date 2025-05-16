@@ -63,3 +63,10 @@ class LinkSuccessView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         context['line_user_id'] = self.request.user.userprofile.line_user_id
         return context
+    
+from django.shortcuts import render
+from django.views.decorators.csrf import requires_csrf_token
+
+@requires_csrf_token
+def csrf_failure(request, reason=""):
+    return render(request, 'csrf_error.html', status=403)
