@@ -151,4 +151,4 @@ CSRF_COOKIE_SECURE = True     # httpsでないと無効（RenderではTrueが必
 SESSION_COOKIE_SAMESITE = 'None'
 SESSION_COOKIE_SECURE = True
 
-CSRF_FAILURE_VIEW = 'yourapp.views.csrf_failure'
+CSRF_FAILURE_VIEW = 'accounts.views.csrf_failure'

@@ -66,5 +66,5 @@ class LinkSuccessView(LoginRequiredMixin, TemplateView):
     
 from django.shortcuts import render
 
-def csrf_error_view(request, exception=None):
+def csrf_failure(request, exception=None):
     return render(request, 'accounts/csrf_error.html', status=403)

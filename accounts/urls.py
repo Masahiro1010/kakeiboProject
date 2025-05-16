@@ -9,3 +9,5 @@ urlpatterns = [
     path('link-line/', views.LineLinkView.as_view(), name='link_line'),
     path('link-line/success/', views.LinkSuccessView.as_view(), name='link_success'),
 ]
+
+handler403 = 'accounts.views.csrf_failure'
