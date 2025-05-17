@@ -10,6 +10,12 @@ from django.views.generic import TemplateView
 from django.contrib.auth import login
 import random
 import string
+from django.conf import settings
+from django.views import View
+import requests
+from django.shortcuts import redirect
+from django.contrib.auth.models import User
+from django.contrib.auth import login
 
 class SignupView(CreateView):
     form_class = UserCreationForm
@@ -63,6 +69,55 @@ class LinkSuccessView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         context['line_user_id'] = self.request.user.userprofile.line_user_id
         return context
+    
+class LineLoginView(View):
+    def get(self, request):
+        url = (
+            "https://access.line.me/oauth2/v2.1/authorize"
+            f"?response_type=code"
+            f"&client_id={settings.LINE_CHANNEL_ID}"
+            f"&redirect_uri={settings.LINE_REDIRECT_URI}"
+            f"&state=random"
+            f"&scope=openid%20profile"
+        )
+        return redirect(url)
+
+
+class LineCallbackView(View):
+    def get(self, request):
+        code = request.GET.get("code")
+        token_url = "https://api.line.me/oauth2/v2.1/token"
+        headers = {"Content-Type": "application/x-www-form-urlencoded"}
+        data = {
+            "grant_type": "authorization_code",
+            "code": code,
+            "redirect_uri": settings.LINE_REDIRECT_URI,
+            "client_id": settings.LINE_CHANNEL_ID,
+            "client_secret": settings.LINE_CHANNEL_SECRET,
+        }
+
+        token_res = requests.post(token_url, headers=headers, data=data)
+        token_data = token_res.json()
+
+        access_token = token_data.get("access_token")
+        profile_url = "https://api.line.me/v2/profile"
+        profile_res = requests.get(profile_url, headers={"Authorization": f"Bearer {access_token}"})
+        profile = profile_res.json()
+
+        line_user_id = profile.get("userId")
+        display_name = profile.get("displayName")
+
+        # UserProfileからユーザーを取得または作成
+        try:
+            user_profile = UserProfile.objects.get(line_user_id=line_user_id)
+            user = user_profile.user
+        except UserProfile.DoesNotExist:
+            # 新規作成（仮登録用ユーザー）
+            user = User.objects.create(username=f"line_{line_user_id}")
+            UserProfile.objects.create(user=user, line_user_id=line_user_id)
+
+        login(request, user)
+        return redirect("ledger")  # ログイン後の遷移先
     
 from django.shortcuts import render
 

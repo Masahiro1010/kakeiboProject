@@ -152,3 +152,7 @@ SESSION_COOKIE_SAMESITE = 'None'
 SESSION_COOKIE_SECURE = True
 
 CSRF_FAILURE_VIEW = 'accounts.views.csrf_failure'
+
+LINE_CHANNEL_ID = os.environ.get('LINE_CHANNEL_ID')
+LINE_CHANNEL_SECRET = os.environ.get('LINE_CHANNEL_SECRET2')
+LINE_REDIRECT_URI = 'https://kakeiboproject.onrender.com/accounts/line/callback/' 
