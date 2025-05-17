@@ -123,19 +123,19 @@ class LineCallbackView(View):
             if not line_user_id:
                 return HttpResponse("LINEユーザーIDが取得できませんでした", status=400)
 
-            # UserProfileと紐づけてログイン処理
-            from django.contrib.auth.models import User
-            from accounts.models import UserProfile
-
+            # ✅ 既存UserProfile確認
             try:
                 user_profile = UserProfile.objects.get(line_user_id=line_user_id)
                 user = user_profile.user
             except UserProfile.DoesNotExist:
-                user = User.objects.create(username=f"line_{line_user_id}")
-                UserProfile.objects.create(user=user, line_user_id=line_user_id)
+                # 新しいユーザーを作成（すでにUserがある場合はエラーになるので、そこも防ぐ）
+                username = f"line_{line_user_id}"
+                user, created = User.objects.get_or_create(username=username)
+                UserProfile.objects.get_or_create(user=user, defaults={"line_user_id": line_user_id})
 
+            # ログインしてリダイレクト
             login(request, user)
-            return redirect("home")
+            return redirect("ledger")  # ここは home でも ledger でもOK
 
         except Exception as e:
             print("🔥 LINEログイン中にエラー:", e)
