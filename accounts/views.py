@@ -86,6 +86,7 @@ class LineLoginView(View):
 class LineCallbackView(View):
     def get(self, request):
         try:
+            
             code = request.GET.get("code")
             if not code:
                 print("🚫 codeが取得できていません")
@@ -118,6 +119,7 @@ class LineCallbackView(View):
             print("🐢 profile:", profile)
 
             line_user_id = profile.get("userId")
+            print(f"LINEから受け取ったID: {line_user_id}")
             display_name = profile.get("displayName")
             if not line_user_id:
                 return HttpResponse("LINEユーザーIDが取得できませんでした", status=400)
