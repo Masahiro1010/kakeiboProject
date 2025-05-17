@@ -122,16 +122,15 @@ class LineCallbackView(View):
             if not line_user_id:
                 return HttpResponse("LINEユーザーIDが取得できませんでした", status=400)
 
-            # ✅ LINE連携済みユーザーを探してログイン
+            # ✅ ここが重要：既存のUserProfileに紐づくユーザーを使う。なければエラー。
             try:
                 user_profile = UserProfile.objects.get(line_user_id=line_user_id)
                 user = user_profile.user
                 login(request, user)
-                print(f"✅ LINE連携ユーザーにログイン成功: {user.username}")
-                return redirect("/ledger")
-
+                print(f"✅ ログイン成功: {user.username}")
+                return redirect("home")
             except UserProfile.DoesNotExist:
-                print("❌ LINE連携されているユーザーが見つかりません")
+                print("❌ 該当するUserProfileが見つかりません")
                 return redirect("/login/?error=line_user_not_found")
 
         except Exception as e:
