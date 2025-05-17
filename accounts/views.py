@@ -135,7 +135,7 @@ class LineCallbackView(View):
 
             # ログインしてリダイレクト
             login(request, user)
-            return redirect("ledger")  # ここは home でも ledger でもOK
+            return redirect("home")  # ここは home でも ledger でもOK
 
         except Exception as e:
             print("🔥 LINEログイン中にエラー:", e)
