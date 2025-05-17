@@ -135,7 +135,7 @@ class LineCallbackView(View):
                 UserProfile.objects.create(user=user, line_user_id=line_user_id)
 
             login(request, user)
-            return redirect("ledger")
+            return redirect("home")
 
         except Exception as e:
             print("🔥 LINEログイン中にエラー:", e)
