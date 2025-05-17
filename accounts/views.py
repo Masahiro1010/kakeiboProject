@@ -16,6 +16,7 @@ import requests
 from django.shortcuts import redirect
 from django.contrib.auth.models import User
 from django.contrib.auth import login
+from django.http import HttpResponse
 
 class SignupView(CreateView):
     form_class = UserCreationForm
@@ -85,39 +86,60 @@ class LineLoginView(View):
 
 class LineCallbackView(View):
     def get(self, request):
-        code = request.GET.get("code")
-        token_url = "https://api.line.me/oauth2/v2.1/token"
-        headers = {"Content-Type": "application/x-www-form-urlencoded"}
-        data = {
-            "grant_type": "authorization_code",
-            "code": code,
-            "redirect_uri": settings.LINE_REDIRECT_URI,
-            "client_id": settings.LINE_CHANNEL_ID,
-            "client_secret": settings.LINE_CHANNEL_SECRET,
-        }
-
-        token_res = requests.post(token_url, headers=headers, data=data)
-        token_data = token_res.json()
-
-        access_token = token_data.get("access_token")
-        profile_url = "https://api.line.me/v2/profile"
-        profile_res = requests.get(profile_url, headers={"Authorization": f"Bearer {access_token}"})
-        profile = profile_res.json()
-
-        line_user_id = profile.get("userId")
-        display_name = profile.get("displayName")
-
-        # UserProfileからユーザーを取得または作成
         try:
-            user_profile = UserProfile.objects.get(line_user_id=line_user_id)
-            user = user_profile.user
-        except UserProfile.DoesNotExist:
-            # 新規作成（仮登録用ユーザー）
-            user = User.objects.create(username=f"line_{line_user_id}")
-            UserProfile.objects.create(user=user, line_user_id=line_user_id)
+            code = request.GET.get("code")
+            if not code:
+                print("🚫 codeが取得できていません")
+                return HttpResponse("認証コードがありません", status=400)
 
-        login(request, user)
-        return redirect("ledger")  # ログイン後の遷移先
+            # トークン取得
+            token_url = "https://api.line.me/oauth2/v2.1/token"
+            headers = {"Content-Type": "application/x-www-form-urlencoded"}
+            data = {
+                "grant_type": "authorization_code",
+                "code": code,
+                "redirect_uri": settings.LINE_REDIRECT_URI,
+                "client_id": settings.LINE_CHANNEL_ID,
+                "client_secret": settings.LINE_CHANNEL_SECRET,
+            }
+
+            token_res = requests.post(token_url, headers=headers, data=data)
+            token_data = token_res.json()
+            print("🐢 token_data:", token_data)
+
+            access_token = token_data.get("access_token")
+            if not access_token:
+                return HttpResponse("アクセストークン取得失敗", status=400)
+
+            # プロフィール取得
+            profile_url = "https://api.line.me/v2/profile"
+            headers = {"Authorization": f"Bearer {access_token}"}
+            profile_res = requests.get(profile_url, headers=headers)
+            profile = profile_res.json()
+            print("🐢 profile:", profile)
+
+            line_user_id = profile.get("userId")
+            display_name = profile.get("displayName")
+            if not line_user_id:
+                return HttpResponse("LINEユーザーIDが取得できませんでした", status=400)
+
+            # UserProfileと紐づけてログイン処理
+            from django.contrib.auth.models import User
+            from accounts.models import UserProfile
+
+            try:
+                user_profile = UserProfile.objects.get(line_user_id=line_user_id)
+                user = user_profile.user
+            except UserProfile.DoesNotExist:
+                user = User.objects.create(username=f"line_{line_user_id}")
+                UserProfile.objects.create(user=user, line_user_id=line_user_id)
+
+            login(request, user)
+            return redirect("ledger")
+
+        except Exception as e:
+            print("🔥 LINEログイン中にエラー:", e)
+            return HttpResponse("正常に処理できませんでした", status=500)
     
 from django.shortcuts import render
 
