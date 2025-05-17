@@ -10,7 +10,7 @@ urlpatterns = [
     path('link-line/', views.LineLinkView.as_view(), name='link_line'),
     path('link-line/success/', views.LinkSuccessView.as_view(), name='link_success'),
     path("line/login/", LineLoginView.as_view(), name="line_login"),
-    path("line/callback/", LineCallbackView.as_view(), name="line_callback"),
+    path("callback/", LineCallbackView.as_view(), name="line_callback"),
 ]
 
 handler403 = 'accounts.views.csrf_failure'

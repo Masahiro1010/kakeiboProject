@@ -155,4 +155,4 @@ CSRF_FAILURE_VIEW = 'accounts.views.csrf_failure'
 
 LINE_CHANNEL_ID = os.environ.get('LINE_CHANNEL_ID')
 LINE_CHANNEL_SECRET = os.environ.get('LINE_CHANNEL_SECRET2')
-LINE_REDIRECT_URI = 'https://kakeiboproject.onrender.com/accounts/line/callback/' 
+LINE_REDIRECT_URI = "https://kakeiboproject.onrender.com/callback/"
