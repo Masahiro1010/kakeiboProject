@@ -83,7 +83,6 @@ class LineLoginView(View):
         )
         return redirect(url)
 
-
 class LineCallbackView(View):
     def get(self, request):
         try:
@@ -123,30 +122,17 @@ class LineCallbackView(View):
             if not line_user_id:
                 return HttpResponse("LINEユーザーIDが取得できませんでした", status=400)
 
-            # ✅ 他のユーザーに紐づいているLINE IDを解除
+            # ✅ LINE連携済みユーザーを探してログイン
             try:
-                existing_profile = UserProfile.objects.get(line_user_id=line_user_id)
-                print(f"🔁 既存の連携を解除（ユーザー: {existing_profile.user.username}）")
-                existing_profile.line_user_id = None
-                existing_profile.save()
+                user_profile = UserProfile.objects.get(line_user_id=line_user_id)
+                user = user_profile.user
+                login(request, user)
+                print(f"✅ LINE連携ユーザーにログイン成功: {user.username}")
+                return redirect("/ledger")
+
             except UserProfile.DoesNotExist:
-                pass  # 他ユーザーと連携されていなければ問題なし
-
-            # ✅ 今のユーザーを取得（ログイン済み or 新規作成）
-            if request.user.is_authenticated:
-                user = request.user
-            else:
-                username = f"line_{line_user_id}"
-                user, _ = User.objects.get_or_create(username=username)
-
-            # ✅ 現在のユーザーにLINE IDを紐づけ
-            profile, _ = UserProfile.objects.get_or_create(user=user)
-            profile.line_user_id = line_user_id
-            profile.save()
-
-            # ✅ ログインしてリダイレクト
-            login(request, user)
-            return redirect("/ledger")  # or 'home' if that's your homepage
+                print("❌ LINE連携されているユーザーが見つかりません")
+                return redirect("/login/?error=line_user_not_found")
 
         except Exception as e:
             print("🔥 LINEログイン中にエラー:", e)

@@ -45,7 +45,6 @@
             <div id="browser-warning" class="alert alert-warning text-center" style="display: none; font-size: 0.9rem;">
                 ⚠️ 現在LINEアプリ内で開かれています。<br>
                 正常にログインできない場合は、<span id="browser-instruction"></span>
-                
             </div>
 
             <!-- アプリの紹介エリア -->
@@ -57,6 +56,15 @@
             <!-- ログインカード -->
             <div class="card shadow-sm">
                 <div class="card-body p-4">
+
+                    <!-- ✅ LINE未連携時のエラーメッセージ -->
+                    {% if request.GET.error == 'line_user_not_found' %}
+                        <div class="alert alert-danger text-center" style="font-size: 0.9rem;">
+                            ⚠️ このLINEアカウントはRecoRecoに連携されていません。<br>
+                            Webでログインし、マイページからLINE連携を行ってください。
+                        </div>
+                    {% endif %}
+
                     <h5 class="card-title text-center mb-4">ログイン</h5>
 
                     <form method="post">
@@ -73,6 +81,7 @@
                                 {% endif %}
                             </div>
                         {% endfor %}
+
                         <button type="submit" class="btn btn-primary w-100 btn-sm">ログインする</button>
 
                         <div class="text-center mt-3">
@@ -81,7 +90,7 @@
                             </a>
                         </div>
 
-                        <div class="form-check mb-3">
+                        <div class="form-check mb-3 mt-3">
                             <input class="form-check-input" type="checkbox" name="remember_me" id="rememberMe">
                             <label class="form-check-label" for="rememberMe">
                                 ログイン状態を保持する
@@ -103,7 +112,7 @@
         const isLine = navigator.userAgent.toLowerCase().includes("line");
         const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
         const isAndroid = /Android/.test(navigator.userAgent);
-    
+
         if (isLine) {
             document.getElementById('browser-warning').style.display = 'block';
             const instruction = isIOS
