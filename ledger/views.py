@@ -6,7 +6,7 @@ from .models import TemplateItem
 from .models import Record
 from django.views.generic.edit import FormView
 from django.urls import reverse_lazy
-from .forms import TemplateRecordForm
+from .forms import TemplateRecordForm, TemplateItemForm
 from django.views.generic import ListView
 from django.views.generic.edit import UpdateView, DeleteView
 from django.core.exceptions import PermissionDenied
@@ -108,7 +108,7 @@ class TemplateItemConnectionView(LoginRequiredMixin, TemplateView):
 
 class TemplateItemCreateView(LoginRequiredMixin, CreateView):
     model = TemplateItem
-    fields = ['name', 'price', 'item_type']
+    form_class = TemplateItemForm
     template_name = 'ledger/templateitem_form.html'
     success_url = reverse_lazy('home')
 
@@ -118,7 +118,7 @@ class TemplateItemCreateView(LoginRequiredMixin, CreateView):
     
 class TemplateItemUpdateView(LoginRequiredMixin, UpdateView):
     model = TemplateItem
-    fields = ['name', 'price', 'item_type']
+    form_class = TemplateItemForm
     template_name = 'ledger/templateitem_form.html'
     success_url = reverse_lazy('record_list')
 
