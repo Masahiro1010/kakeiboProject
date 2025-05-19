@@ -16,5 +16,6 @@ urlpatterns = [
     path('record/summary/', views.MonthlySummaryView.as_view(), name='monthly_summary'),
     path('chart/', views.ChartView.as_view(), name='chart'),
     path('chart/detail/', views.ChartDetailView.as_view(), name='chart_detail'),
+    path("tutorial/", views.TutorialView.as_view(), name="tutorial"),
 ]
 

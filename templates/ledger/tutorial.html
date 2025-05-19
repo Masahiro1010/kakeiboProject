@@ -1,0 +1,53 @@
+{% extends 'ledger/base.html' %}
+
+{% block title %}使い方ガイド{% endblock %}
+
+{% block brand_title %}使い方ガイド{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="text-center mb-4">
+        <h2 class="fw-bold">RecoRecoの使い方</h2>
+        <p class="text-muted">初めての方でも安心。家計簿の記録から確認までを分かりやすく説明します。</p>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-6 col-lg-3">
+            <div class="card shadow-sm h-100">
+                <div class="card-body text-center">
+                    <h5 class="card-title">① アカウント作成</h5>
+                    <p class="card-text small">まずはメールアドレスでアカウント登録し、ログインします。</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="card shadow-sm h-100">
+                <div class="card-body text-center">
+                    <h5 class="card-title">② テンプレートを作る</h5>
+                    <p class="card-text small">よく使う「食費」「バイト代」などをテンプレ化しましょう。</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="card shadow-sm h-100">
+                <div class="card-body text-center">
+                    <h5 class="card-title">③ 記録する</h5>
+                    <p class="card-text small">テンプレや自由入力で記録をどんどん追加。</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="card shadow-sm h-100">
+                <div class="card-body text-center">
+                    <h5 class="card-title">④ グラフで見る</h5>
+                    <p class="card-text small">収支をグラフで分析しよう。月ごとの比較もできます。</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-5">
+        <a href="{% url 'home' %}" class="btn btn-primary">ホームに戻る</a>
+    </div>
+</div>
+{% endblock %}

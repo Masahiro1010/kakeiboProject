@@ -356,3 +356,6 @@ class ChartDetailView(LoginRequiredMixin, TemplateView):
         context['expense_total'] = expense_total
 
         return context
+    
+class TutorialView(TemplateView):
+    template_name = "tutorial.html"
