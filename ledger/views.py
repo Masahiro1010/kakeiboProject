@@ -358,4 +358,4 @@ class ChartDetailView(LoginRequiredMixin, TemplateView):
         return context
     
 class TutorialView(TemplateView):
-    template_name = "tutorial.html"
+    template_name = "accounts/tutorial.html"
