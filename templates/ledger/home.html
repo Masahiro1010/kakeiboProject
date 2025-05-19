@@ -7,14 +7,39 @@
 {% block content %}
 
 {% if user.is_authenticated and not user.userprofile.line_user_id %}
-<div class="alert alert-light border d-flex align-items-center mt-4" role="alert">
-    <div class="me-2 fs-4">📱</div>
-    <div class="flex-grow-1" style="font-size: 0.95rem;">
-        LINE連携して記録をもっと簡単に →
-        <a href="{% url 'link_line' %}" class="text-decoration-none fw-semibold">連携する</a>
+    <div class="alert alert-light border d-flex align-items-center mt-4" role="alert">
+        <div class="me-2 fs-4">📱</div>
+        <div class="flex-grow-1" style="font-size: 0.95rem;">
+            LINE連携して記録をもっと簡単に →
+            <a href="{% url 'link_line' %}" class="text-decoration-none fw-semibold">連携する</a>
+        </div>
+    </div>
+{% endif %}
+
+<!-- 🎉 初回ガイドモーダル -->
+<div class="modal fade" id="welcomeModal" tabindex="-1" aria-labelledby="welcomeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content shadow">
+            <div class="modal-header">
+                <h5 class="modal-title" id="welcomeModalLabel">ようこそ、RecoRecoへ！</h5>
+            </div>
+            <div class="modal-body">
+                <p>RecoRecoでは、以下のステップで家計簿管理ができます：</p>
+                <ol class="small">
+                    <li>テンプレートを登録</li>
+                    <li>レコードを入力</li>
+                    <li>記録を一覧で確認・グラフで分析</li>
+                    <li>LINE連携でさらに手軽に</li>
+                </ol>
+                <p class="text-muted small">※このガイドは次回以降表示されません</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-sm" id="hideGuideBtn">今後表示しない</button>
+                <button type="button" class="btn btn-primary btn-sm" data-bs-dismiss="modal">OK</button>
+            </div>
+        </div>
     </div>
 </div>
-{% endif %}
 
 <div class="row gx-3 gy-4">
     <!-- カード列 -->
@@ -159,6 +184,30 @@
     drawChart();
 </script>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // 初回のみ表示
+        if (!document.cookie.includes('hide_guide=true')) {
+            const modal = new bootstrap.Modal(document.getElementById('welcomeModal'));
+            modal.show();
+        }
+
+        // 非表示設定
+        document.getElementById('hideGuideBtn')?.addEventListener('click', function () {
+            document.cookie = "hide_guide=true; path=/; max-age=" + 60 * 60 * 24 * 30;
+            bootstrap.Modal.getInstance(document.getElementById('welcomeModal')).hide();
+        });
+
+        // アンカー #guide があれば強制表示
+        if (window.location.hash === "#guide") {
+            setTimeout(() => {
+                const el = document.getElementById('welcomeModal');
+                if (el) new bootstrap.Modal(el).show();
+            }, 500);
+        }
+    });
+</script>
 
 {% endblock %}
 
