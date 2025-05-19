@@ -1,0 +1,37 @@
+{% extends 'tutorial/tutorial_base.html' %}
+
+{% block page_title %}① アカウントを作成しよう{% endblock %}
+{% block page_subtitle %}RecoRecoを使い始めるには、まず最初にアカウント登録が必要です。{% endblock %}
+
+{% block content %}
+
+<p>RecoRecoでは、シンプルなフォームでアカウントをすぐに作成できます。</p>
+
+<h6 class="mt-4">🔑 登録の手順</h6>
+<ol>
+    <li>「ユーザー名」と「パスワード」を入力します</li>
+    <li>確認用に同じパスワードをもう一度入力します</li>
+    <li><strong>登録する</strong>ボタンを押します</li>
+</ol>
+
+<!-- Cloudinary画像挿入 -->
+<div class="text-center my-4">
+    <img src="https://res.cloudinary.com/dohlmfc2f/image/upload/v1747654436/RecoReco%E6%96%B0%E8%A6%8F%E7%99%BB%E9%8C%B2_ldyqdj.png"
+        alt="RecoReco 新規登録画面"
+        class="img-fluid rounded shadow-sm"
+        style="max-width: 360px;">
+    <p class="small text-muted mt-2">▲ スマートフォンでの登録画面の例</p>
+</div>
+
+<h6 class="mt-4">💡 補足</h6>
+<ul>
+    <li>パスワードは8文字以上をおすすめします</li>
+    <li>ログイン後、マイページからLINE連携もできます</li>
+    <li>登録後はすぐに家計簿の入力が可能になります</li>
+</ul>
+
+<div class="mt-5 text-end">
+    <a href="{% url 'home' %}" class="btn btn-outline-primary btn-sm">次へ → テンプレートを作る</a>
+</div>
+
+{% endblock %}

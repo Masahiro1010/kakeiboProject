@@ -1,0 +1,83 @@
+{% extends 'ledger/base.html' %}
+
+{% block title %}使い方ガイド{% endblock %}
+
+{% block brand_title %}使い方ガイド{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="text-center mb-4">
+        <h2 class="fw-bold">RecoRecoの使い方</h2>
+        <p class="text-muted">初めての方でも安心。家計簿の記録から確認までを分かりやすく説明します。</p>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-6 col-lg-3">
+            <a href="{% url 'tutorial_signup' %}" class="text-decoration-none text-dark">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">① アカウント作成</h5>
+                        <p class="card-text small">メールアドレスで登録し、ログインしましょう。</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-6 col-lg-3">
+
+                <div class="card shadow-sm h-100">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">② テンプレート作成</h5>
+                        <p class="card-text small">よく使う「食費」「バイト代」などを登録します。</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-6 col-lg-3">
+
+                <div class="card shadow-sm h-100">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">③ 記録入力</h5>
+                        <p class="card-text small">テンプレや自由入力で記録を追加しましょう。</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            
+                <div class="card shadow-sm h-100">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">④ グラフ</h5>
+                        <p class="card-text small">収支をグラフで比較・確認できます。</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+    
+    <!-- LINE連携カード（横長・中央） -->
+    <div class="row g-4 mt-2">
+        <div class="col-12 col-md-8 offset-md-2">
+            
+                <div class="card shadow-sm h-100 border border-success">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">⑤ 📱 LINE連携</h5>
+                        <p class="card-text small">
+                            LINEからも収支記録！<br>
+                            マイページから連携できます。
+                        </p>
+                        {% if user.is_authenticated %}
+                            <p class="small">
+                                → <a href="{% url 'mypage' %}" class="text-decoration-none">マイページはこちら</a>
+                            </p>
+                        {% endif %}
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <div class="text-center mt-5">
+        <a href="{% url 'home' %}" class="btn btn-primary">ホームに戻る</a>
+    </div>
+</div>
+{% endblock %}

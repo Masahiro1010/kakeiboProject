@@ -25,6 +25,7 @@ urlpatterns = [
     path('', include('accounts.urls')), 
     path('ledger', include('ledger.urls')), 
     path('line/', include('linehandler.urls')),
+    path('tutorial/', include('tutorial.urls')),
 ]
 
 if settings.DEBUG:

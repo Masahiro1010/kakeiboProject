@@ -357,5 +357,3 @@ class ChartDetailView(LoginRequiredMixin, TemplateView):
 
         return context
     
-class TutorialView(TemplateView):
-    template_name = "ledger/tutorial.html"
