@@ -73,12 +73,15 @@ class LinkSuccessView(LoginRequiredMixin, TemplateView):
     
 class LineLoginView(View):
     def get(self, request):
+        remember_me = request.GET.get("remember_me", "0")
+        state = f"remember_me_{remember_me}"
+
         url = (
             "https://access.line.me/oauth2/v2.1/authorize"
             f"?response_type=code"
             f"&client_id={settings.LINE_CHANNEL_ID}"
             f"&redirect_uri={settings.LINE_REDIRECT_URI}"
-            f"&state=random"
+            f"&state={state}"
             f"&scope=openid%20profile"
         )
         return redirect(url)
@@ -86,8 +89,10 @@ class LineLoginView(View):
 class LineCallbackView(View):
     def get(self, request):
         try:
-            
             code = request.GET.get("code")
+            state = request.GET.get("state", "")
+            print(f"🌐 state: {state}")
+
             if not code:
                 print("🚫 codeが取得できていません")
                 return HttpResponse("認証コードがありません", status=400)
@@ -119,12 +124,22 @@ class LineCallbackView(View):
             print("🐢 profile:", profile)
 
             line_user_id = profile.get("userId")
-            print(f"LINEから受け取ったID: {line_user_id}")
             display_name = profile.get("displayName")
+            print(f"LINEから受け取ったID: {line_user_id}")
+
             if not line_user_id:
                 return HttpResponse("LINEユーザーIDが取得できませんでした", status=400)
 
-            # ✅ ここが重要：既存のUserProfileに紐づくユーザーを使う。なければエラー。
+            # セッション有効期限の設定（stateによって切り替え）
+            remember_me = state.startswith("remember_me_1")
+            if remember_me:
+                request.session.set_expiry(60 * 10)  # 10分
+                print("🕒 セッション：10分間保持")
+            else:
+                request.session.set_expiry(0)  # ブラウザを閉じたらログアウト
+                print("🕒 セッション：ブラウザを閉じたら終了")
+
+            # ユーザーを取得・ログイン
             try:
                 user_profile = UserProfile.objects.get(line_user_id=line_user_id)
                 user = user_profile.user
@@ -138,8 +153,7 @@ class LineCallbackView(View):
         except Exception as e:
             print("🔥 LINEログイン中にエラー:", e)
             return HttpResponse("正常に処理できませんでした", status=500)
-    
-from django.shortcuts import render
+
 
 def csrf_failure(request, reason=""):
     return render(request, 'accounts/csrf_error.html', status=403)
