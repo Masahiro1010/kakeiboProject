@@ -1,0 +1,51 @@
+{% extends 'tutorial/tutorial_base.html' %}
+
+{% block page_title %}③ 記録を入力しよう{% endblock %}
+{% block page_subtitle %}テンプレートを使った入力と、自由な個別入力の2通りから記録ができます。{% endblock %}
+
+{% block content %}
+
+<p>RecoRecoでは、毎日の支出・収入をすばやく記録するために、<strong>テンプレート入力</strong>と<strong>個別入力</strong>の2つの方法を用意しています。</p>
+
+<h6 class="mt-4">🧭 記録入力操作画面</h6>
+<p>ホーム画面の「記録の入力」ボタンから、この画面に移動できます。</p>
+<div class="text-center my-4">
+    <img src="https://res.cloudinary.com/dohlmfc2f/image/upload/v1747707538/RecoReco%E8%A8%98%E9%8C%B2%E5%85%A5%E5%8A%9B%E6%93%8D%E4%BD%9C_juleuy.png"
+        alt="記録入力操作画面"
+        class="img-fluid rounded mx-auto d-block"
+        style="max-width: 360px; width: 100%; height: auto;">
+    <p class="small text-muted mt-2">▲ テンプレート入力と個別入力の切り替えができます</p>
+</div>
+
+<h6 class="mt-4">📝 テンプレートから記録を登録する</h6>
+<p>テンプレート入力では、あらかじめ登録したテンプレートを選んで、個数や時間数を入力するだけです。</p>
+<div class="text-center my-4">
+    <img src="https://res.cloudinary.com/dohlmfc2f/image/upload/v1747707549/RecoReco%E3%83%86%E3%83%B3%E3%83%97%E3%83%AC%E3%83%BC%E3%83%88_%E8%A8%98%E9%8C%B2%E4%BD%9C%E6%88%90_krs1mf.png"
+        alt="テンプレート記録入力画面"
+        class="img-fluid rounded mx-auto d-block"
+        style="max-width: 360px; width: 100%; height: auto;">
+    <p class="small text-muted mt-2">▲ テンプレート名と個数を入力するだけのシンプル操作</p>
+</div>
+
+<h6 class="mt-4">✍️ 個別に記録を入力する</h6>
+<p>個別入力では、名前・金額・収支区分を自由に入力できます。テンプレートにない支出や収入はこちらで記録しましょう。</p>
+<div class="text-center my-4">
+    <img src="https://res.cloudinary.com/dohlmfc2f/image/upload/v1747707569/RecoReco%E5%80%8B%E5%88%A5_%E8%A8%98%E9%8C%B2%E4%BD%9C%E6%88%90_sh2js7.png"
+        alt="個別記録入力画面"
+        class="img-fluid rounded mx-auto d-block"
+        style="max-width: 360px; width: 100%; height: auto;">
+    <p class="small text-muted mt-2">▲ 使い慣れた入力方式で、自由に記録が可能です</p>
+</div>
+
+<h6 class="mt-4">💡 ちょっとしたヒント</h6>
+<ul>
+    <li>テンプレート入力を使えば記録の時間を半分にできます</li>
+    <li>個別入力は「一度きりの支出」に最適です</li>
+    <li>LINE連携をすれば、LINE上からもこの2つの入力ができます</li>
+</ul>
+
+<div class="mt-5 text-end">
+    <a href="{% url 'home' %}" class="btn btn-outline-primary btn-sm">次へ → グラフで見る</a>
+</div>
+
+{% endblock %}

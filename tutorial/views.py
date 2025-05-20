@@ -9,3 +9,6 @@ class SignupView(TemplateView):
 
 class TutorialTemplateView(TemplateView):
     template_name = "tutorial/templates.html"
+
+class TutorialRecordView(TemplateView):
+    template_name = "tutorial/record.html"
