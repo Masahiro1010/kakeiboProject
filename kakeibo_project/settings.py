@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'linehandler',
     'cloudinary',
     'cloudinary_storage',
+    'tutorial',
 ]
 
 MIDDLEWARE = [
