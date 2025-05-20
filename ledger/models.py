@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
+from cloudinary.models import CloudinaryField
 
 class TemplateItem(models.Model):
     ITEM_TYPE_CHOICES = [
@@ -27,7 +28,7 @@ class Record(models.Model):
     amount = models.PositiveIntegerField('金額')
     item_type = models.CharField('種別', max_length=10, choices=ITEM_TYPE_CHOICES)
     date = models.DateField('日付', default=timezone.now)
-    receipt_image = models.ImageField('レシート画像', upload_to='receipts/', blank=True, null=True)
+    receipt_image = CloudinaryField('レシート画像', blank=True, null=True)
 
     def __str__(self):
         return f"{self.title} - {self.amount}円 ({self.item_type})"
