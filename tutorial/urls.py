@@ -8,4 +8,5 @@ urlpatterns = [
     path("record/", views.TutorialRecordView.as_view(), name="tutorial_record"),
     path("graph/", views.TutorialGraphView.as_view(), name="tutorial_graph"),
     path("line/", views.TutorialLineView.as_view(), name="tutorial_line"),
+    path("first/", views.FirstView.as_view(), name="tutorial_first"),
 ]

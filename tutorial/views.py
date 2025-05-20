@@ -18,3 +18,6 @@ class TutorialGraphView(TemplateView):
 
 class TutorialLineView(TemplateView):
     template_name = "tutorial/line.html"
+
+class FirstView(TemplateView):
+    template_name = "tutorial/firstview.html"
