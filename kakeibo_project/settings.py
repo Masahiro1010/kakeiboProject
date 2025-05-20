@@ -45,6 +45,8 @@ INSTALLED_APPS = [
     'accounts',
     'ledger',
     'linehandler',
+    'cloudinary',
+    'cloudinary_storage',
 ]
 
 MIDDLEWARE = [
@@ -156,3 +158,11 @@ CSRF_FAILURE_VIEW = 'accounts.views.csrf_failure'
 LINE_CHANNEL_ID = os.environ.get('LINE_CHANNEL_ID')
 LINE_CHANNEL_SECRET = os.environ.get('LINE_CHANNEL_SECRET2')
 LINE_REDIRECT_URI = "https://kakeiboproject.onrender.com/callback/"
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': os.environ.get("CLOUDINARY_CLOUD_NAME"),
+    'API_KEY': os.environ.get("CLOUDINARY_API_KEY"),
+    'API_SECRET': os.environ.get("CLOUDINARY_API_SECRET"),
+}
