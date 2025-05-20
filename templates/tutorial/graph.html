@@ -1,0 +1,41 @@
+{% extends 'tutorial/tutorial_base.html' %}
+
+{% block page_title %}④ グラフで収支を確認しよう{% endblock %}
+{% block page_subtitle %}RecoRecoでは、収支のグラフ表示機能で月ごと・日ごとの変化を一目で確認できます。{% endblock %}
+
+{% block content %}
+
+<p>数字だけでなく、グラフでも収支の流れを可視化できます。月別、日別、全体など、さまざまな観点から収支を分析しましょう。</p>
+
+<h6 class="mt-4">📊 記録一覧から見る収支グラフ</h6>
+<p>「記録一覧」画面には、月別／日別／全体の収支をグラフで確認できる機能が用意されています。</p>
+<div class="text-center my-4">
+    <img src="https://res.cloudinary.com/dohlmfc2f/image/upload/v1747710060/RecoReco%E3%82%B0%E3%83%A9%E3%83%95_%E5%8F%8E%E6%94%AF_thf1tj.png"
+        alt="記録一覧の収支グラフ"
+        class="img-fluid rounded mx-auto d-block"
+        style="max-width: 360px; width: 100%; height: auto;">
+    <p class="small text-muted mt-2">▲ 表示範囲を切り替えて詳細な収支をグラフで確認</p>
+</div>
+
+<h6 class="mt-4">🏠 ホーム画面で見るグラフ</h6>
+<p>ホーム画面では、先月との比較や、1年間の収支をまとめてチェックできるグラフが表示されます。</p>
+<div class="text-center my-4">
+    <img src="https://res.cloudinary.com/dohlmfc2f/image/upload/v1747710074/RecoReco%E3%82%B0%E3%83%A9%E3%83%95_%E3%83%9B%E3%83%BC%E3%83%A0%E7%94%BB%E9%9D%A2_prtngw.png"
+        alt="ホーム画面の収支グラフ"
+        class="img-fluid rounded mx-auto d-block"
+        style="max-width: 360px; width: 100%; height: auto;">
+    <p class="small text-muted mt-2">▲ ホーム画面に表示される収支のサマリーグラフ</p>
+</div>
+
+<h6 class="mt-4">💡 グラフの使いどころ</h6>
+<ul>
+    <li>日別グラフで「特定の日の支出増」をチェック</li>
+    <li>月別グラフで「1ヶ月の使いすぎ」を把握</li>
+    <li>年間比較で「季節ごとの傾向」を発見</li>
+</ul>
+
+<div class="mt-5 text-end">
+    <a href="{% url 'tutorial_line' %}" class="btn btn-outline-primary btn-sm">次へ → LINE連携する</a>
+</div>
+
+{% endblock %}

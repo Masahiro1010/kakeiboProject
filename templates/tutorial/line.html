@@ -1,0 +1,64 @@
+{% extends 'tutorial/tutorial_base.html' %}
+
+{% block page_title %}⑤ LINE連携でさらに便利に{% endblock %}
+{% block page_subtitle %}公式LINEと連携すると、チャット感覚で記録を追加できます。{% endblock %}
+
+{% block content %}
+
+<p>RecoRecoでは、公式LINEとアカウントを連携することで、LINEから手軽に収支を記録できます。外出中や移動中でもサクッと記録が可能です。</p>
+
+<h6 class="mt-4">🔗 連携手順の概要</h6>
+<p>ホーム画面の「連携する」リンクから、連携コードとLINE公式アカウントのリンクを確認できます。</p>
+<div class="text-center my-4">
+    <img src="https://res.cloudinary.com/dohlmfc2f/image/upload/v1747718483/RecoReco%E5%85%AC%E5%BC%8FLINE%E3%83%9B%E3%83%BC%E3%83%A0%E7%94%BB%E9%9D%A2_ruvqrj.png"
+        alt="ホーム画面の連携リンク"
+        class="img-fluid rounded mx-auto d-block"
+        style="max-width: 360px; width: 100%; height: auto;">
+    <p class="small text-muted mt-2">▲ ホーム画面に表示されるLINE連携の案内</p>
+</div>
+
+<p>「連携する」リンクを押すと、以下の画面が表示されます。</p>
+<div class="text-center my-4">
+    <img src="https://res.cloudinary.com/dohlmfc2f/image/upload/v1747718499/RecoReco%E5%85%AC%E5%BC%8FLINE%E9%80%A3%E6%90%BA%E3%82%B3%E3%83%BC%E3%83%89_uuzxic.png"
+        alt="連携コード画面"
+        class="img-fluid rounded mx-auto d-block"
+        style="max-width: 360px; width: 100%; height: auto;">
+    <p class="small text-muted mt-2">▲ 表示された6桁のコードをLINEで送信するだけで連携完了</p>
+</div>
+
+<h6 class="mt-4">🤝 連携・解除のやり取り</h6>
+<p>公式LINEに連携コードを送ると、アカウントとRecoRecoが接続されます。「連携解除」と送信すれば、いつでも解除も可能です。</p>
+<div class="text-center my-4">
+    <img src="https://res.cloudinary.com/dohlmfc2f/image/upload/v1747718524/RecoReco%E5%85%AC%E5%BC%8FLINE%E9%80%A3%E6%90%BA_ij5nis.png"
+        alt="LINE連携のやり取り"
+        class="img-fluid rounded mx-auto d-block"
+        style="max-width: 360px; width: 100%; height: auto;">
+    <p class="small text-muted mt-2">▲ いつでも連携・解除ができるので安心</p>
+</div>
+
+<h6 class="mt-4">📲 LINEから記録を入力する</h6>
+<p>連携後は、LINEでメッセージを送るだけで記録がWebアプリに反映されます。</p>
+<ul class="small">
+    <li><strong>テンプレート入力：</strong>「名前 + 半角または全角スペース + 数量」</li>
+    <li><strong>個別入力：</strong>「名前 + スペース + 金額 + スペース + 支出/収入」</li>
+</ul>
+<div class="text-center my-4">
+    <img src="https://res.cloudinary.com/dohlmfc2f/image/upload/v1747718642/RecoReco%E5%85%AC%E5%BC%8FLINE%E8%A8%98%E9%8C%B2_uuwlgr.png"
+        alt="LINEで記録する画面"
+        class="img-fluid rounded mx-auto d-block"
+        style="max-width: 360px; width: 100%; height: auto;">
+    <p class="small text-muted mt-2">▲ LINE上で送った記録がそのままWebに反映されます</p>
+</div>
+
+<h6 class="mt-4">💡 補足</h6>
+<ul>
+    <li>連携コードはログイン中のユーザーごとに毎回自動発行されます</li>
+    <li>1つのLINEアカウントにつき、1つのRecoRecoアカウントと接続可能です</li>
+    <li>LINE上で送った記録も、記録一覧ページやグラフに自動反映されます</li>
+</ul>
+
+<div class="mt-5 text-end">
+    <a href="{% url 'home' %}" class="btn btn-outline-primary btn-sm">ホームに戻る</a>
+</div>
+
+{% endblock %}

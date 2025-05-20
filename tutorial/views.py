@@ -12,3 +12,9 @@ class TutorialTemplateView(TemplateView):
 
 class TutorialRecordView(TemplateView):
     template_name = "tutorial/record.html"
+
+class TutorialGraphView(TemplateView):
+    template_name = "tutorial/graph.html"
+
+class TutorialLineView(TemplateView):
+    template_name = "tutorial/line.html"
