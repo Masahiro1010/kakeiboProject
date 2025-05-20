@@ -6,3 +6,6 @@ class TutorialView(TemplateView):
 
 class SignupView(TemplateView):
     template_name = "tutorial/signup.html"
+
+class TutorialTemplateView(TemplateView):
+    template_name = "tutorial/templates.html"

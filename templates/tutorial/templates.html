@@ -1,0 +1,44 @@
+{% extends 'tutorial/tutorial_base.html' %}
+
+{% block page_title %}② テンプレートを作ろう{% endblock %}
+{% block page_subtitle %}よく使う支出や収入をテンプレート化することで、記録がもっとラクになります。{% endblock %}
+
+{% block content %}
+
+<p>テンプレートを作成しておけば、毎回「名前・金額・収支区分」を入力する必要がありません。<br>たとえばテンプレートを「水 - 120円（支出）」のようにしておくと、<br>記録を「水 2」とするだけで2 × 120円で240円の支出となります。</p>
+
+<h6 class="mt-4">📌 テンプレート操作画面</h6>
+<p>ホーム画面の「テンプレートの操作」から以下の画面に遷移します。</p>
+<div class="text-center my-4">
+    <img src="https://res.cloudinary.com/dohlmfc2f/image/upload/v1747704259/RecoReco%E3%83%86%E3%83%B3%E3%83%97%E3%83%AC%E3%83%BC%E3%83%88%E6%93%8D%E4%BD%9C%E7%94%BB%E9%9D%A2_ypl8b4.png"
+        alt="テンプレート操作画面"
+        class="img-fluid rounded mx-auto d-block"
+        style="max-width: 360px; width: 100%; height: auto;">
+    <p class="small text-muted mt-2">▲ テンプレート登録と編集・削除の入口</p>
+</div>
+
+<h6 class="mt-4">✏️ テンプレートを登録する</h6>
+<p>「登録をする」ボタンを押すと、以下のようなフォームが表示されます。</p>
+<div class="text-center my-4">
+    <img src="https://res.cloudinary.com/dohlmfc2f/image/upload/v1747704248/RecoReco%E3%83%86%E3%83%B3%E3%83%97%E3%83%AC%E3%83%BC%E3%83%88%E7%99%BB%E9%8C%B2%E7%94%BB%E9%9D%A2_hljftz.png"
+        alt="テンプレート登録画面"
+        class="img-fluid rounded mx-auto d-block"
+        style="max-width: 360px; width: 100%; height: auto;">
+    <p class="small text-muted mt-2">▲ テンプレート名・金額・収支区分を入力</p>
+</div>
+
+<h6 class="mt-4">🛠 テンプレートを編集・削除する</h6>
+<p>「操作をする」ボタンを押すと、登録済みテンプレートの一覧が表示されます。編集や削除もここから簡単に行えます。</p>
+<div class="text-center my-4">
+    <img src="https://res.cloudinary.com/dohlmfc2f/image/upload/v1747704225/RecoReco%E3%83%86%E3%83%B3%E3%83%97%E3%83%AC%E3%83%BC%E3%83%88%E7%B7%A8%E9%9B%86%E7%94%BB%E9%9D%A2_veexjt.png"
+        alt="テンプレート編集画面"
+        class="img-fluid rounded mx-auto d-block"
+        style="max-width: 360px; width: 100%; height: auto;">
+    <p class="small text-muted mt-2">▲ 編集・削除がワンタップで可能</p>
+</div>
+
+<div class="mt-5 text-end">
+    <a href="{% url 'home' %}" class="btn btn-outline-primary btn-sm">次へ → 記録を入力する</a>
+</div>
+
+{% endblock %}
