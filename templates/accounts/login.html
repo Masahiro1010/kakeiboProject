@@ -98,15 +98,26 @@
                         </div>
                     </form>
 
-                    <div class="text-center mt-3">
+                    <div class="text-center mt-2">
                         <a href="{% url 'signup' %}" class="text-decoration-none">アカウントを作成する</a>
                     </div>
 
-                    <div class="text-center mt-4">
+                    <!-- ✅ ここにLINE連携についての補足を追加 -->
+                    <div class="text-center mt-2">
+                        <p class="text-muted small mb-2">
+                            🔗 一度LINE連携すれば、次回から<br>「LINEでログイン」ボタンが使えるようになります。
+                        </p>
                         <a href="{% url 'tutorial:tutorial' %}" class="text-decoration-none text-primary small">
                             はじめての方はこちら → RecoRecoの使い方
                         </a>
                     </div>
+
+                    <div class="text-center mt-3">
+                        <a href="{% url 'tutorial:tutorial_first' %}" class="btn btn-outline-secondary btn-sm w-100">
+                            トップページに戻る
+                        </a>
+                    </div>
+
                 </div>
             </div>
 
