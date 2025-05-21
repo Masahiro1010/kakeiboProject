@@ -53,6 +53,16 @@
                 <div class="card-body p-4">
                     <h5 class="card-title text-center mb-4">新規登録</h5>
 
+                    <!-- パスワード条件・ユーザー名注意 -->
+                    <div class="alert alert-secondary small" role="alert">
+                        <strong>パスワードの条件</strong><br>
+                        ・6文字以上で入力してください。<br>
+                        ・ユーザー名やメールアドレスと似ているものは使用できません。<br>
+                        ・「123456」や「password」などの一般的な単語は使えません。<br><br>
+                        <strong>ユーザー名について</strong><br>
+                        ・すでに登録されているユーザー名は使用できません。
+                    </div>
+
                     <form method="post">
                         {% csrf_token %}
                         {% if form.non_field_errors %}
