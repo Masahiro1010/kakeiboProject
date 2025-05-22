@@ -5,10 +5,9 @@
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}会計簿アプリ{% endblock %}</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1"> <!-- ← これ超重要！ -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        /* スマホ専用の微調整 */
         @media (max-width: 768px) {
             .card-title {
                 font-size: 1.1rem;
@@ -45,6 +44,8 @@
                     <li class="nav-item"><a class="nav-link" href="{% url 'templateitem_connection' %}">テンプレート操作</a></li>
                     <li class="nav-item"><a class="nav-link" href="{% url 'record_connection' %}">記録入力</a></li>
                     <li class="nav-item"><a class="nav-link" href="{% url 'record_list' %}">記録一覧</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/tutorial/first">トップページ</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/tutorial">はじめてガイド</a></li>
                     <li class="nav-item d-flex align-items-center ms-lg-2">
                         <form method="post" action="{% url 'logout' %}" class="m-0">
                             {% csrf_token %}
@@ -65,7 +66,7 @@
         </div>
     </main>
 
-    <!-- フッター（LINE連携表示） -->
+    <!-- フッター -->
     <footer class="bg-light border-top mt-auto py-3">
         <div class="container text-center px-3">
             {% if user.is_authenticated %}
@@ -83,6 +84,7 @@
         </div>
     </footer>
 
+    <!-- スクリプトを body の最後に移動 -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
